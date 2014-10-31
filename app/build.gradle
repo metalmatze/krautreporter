@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.0.2"
 
     defaultConfig {
-        applicationId "de.krautreporter.metalmatze.krautreporter"
+        applicationId "de.metalmatze.krautreporter"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
