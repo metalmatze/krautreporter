@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="krautPrimary" type="color">#fffd0243</item>
+    <item name="krautPrimaryDark" type="color">#ffe6023d</item>
+
+</resources>
