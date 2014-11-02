@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/krautPrimary</item>
+        <item name="colorPrimaryDark">@color/krautPrimaryDark</item>
+        <item name="colorAccent">@color/krautPrimary</item>
+    </style>
+
+</resources>
