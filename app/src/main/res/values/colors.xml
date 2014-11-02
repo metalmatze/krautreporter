@@ -3,5 +3,8 @@
 
     <item name="krautPrimary" type="color">#fffd0243</item>
     <item name="krautPrimaryDark" type="color">#ffe6023d</item>
+    <item name="krautAccent" type="color">@color/krautPrimary</item>
+    <item name="krautWindowBackground" type="color">#fff2f2f2</item>
+    <item name="krautTextColor" type="color">#ff333333</item>
 
 </resources>

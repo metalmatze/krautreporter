@@ -3,7 +3,9 @@
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/krautPrimary</item>
         <item name="colorPrimaryDark">@color/krautPrimaryDark</item>
-        <item name="colorAccent">@color/krautPrimary</item>
+        <item name="colorAccent">@color/krautAccent</item>
+        <item name="android:windowBackground">@color/krautWindowBackground</item>
+        <item name="android:textColor">@color/krautTextColor</item>
     </style>
 
 </resources>
