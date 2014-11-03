@@ -1,4 +1,4 @@
-package de.metalmatze.krautreporter;
+package de.metalmatze.krautreporter.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleRecyclerViewAdapter;
 import de.metalmatze.krautreporter.entities.Article;
 
