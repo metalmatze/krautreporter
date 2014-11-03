@@ -11,10 +11,10 @@ public class Article {
     }
 
     public String getDate() {
-        return date;
+        return this.date;
     }
 
     public String getHeadline() {
-        return headline;
+        return this.headline;
     }
 }
