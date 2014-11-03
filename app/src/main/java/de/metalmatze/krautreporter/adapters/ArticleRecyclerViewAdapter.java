@@ -11,11 +11,11 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.entities.Article;
 import de.metalmatze.krautreporter.viewholders.ArticleViewHolder;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
+public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
 
     private List<Article> articles;
 
-    public RecyclerAdapter(List<Article> articles) {
+    public ArticleRecyclerViewAdapter(List<Article> articles) {
         this.articles = articles;
     }
 

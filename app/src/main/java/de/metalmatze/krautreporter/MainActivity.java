@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import de.metalmatze.krautreporter.adapters.RecyclerAdapter;
+import de.metalmatze.krautreporter.adapters.ArticleRecyclerViewAdapter;
 import de.metalmatze.krautreporter.entities.Article;
 
 public class MainActivity extends ActionBarActivity {
@@ -27,7 +27,7 @@ public class MainActivity extends ActionBarActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         ArrayList<Article> articles = new ArrayList<Article>();
-        RecyclerAdapter adapter = new RecyclerAdapter(articles);
+        ArticleRecyclerViewAdapter adapter = new ArticleRecyclerViewAdapter(articles);
 
         for (int i = 1; i <= 150; i++) {
             articles.add(new Article(i + ".10.2014", "Artikel Nummer " + i));
