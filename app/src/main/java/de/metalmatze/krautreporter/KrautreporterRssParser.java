@@ -105,4 +105,25 @@ public class KrautreporterRssParser {
         return calendar;
     }
 
+    private String parseContent(String text) {
+
+        this.parseTeaserImage(text);
+
+        return text;
+    }
+
+    private void parseTeaserImage(String text) {
+        Pattern pattern = Pattern.compile("(<img src=')(.*(teaser_image).*)('\\/>)");
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find())
+        {
+            try {
+                this.article.setTeaserImage(new URL("http://krautreporter.de" + matcher.group(2)));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
