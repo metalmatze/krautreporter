@@ -4,16 +4,25 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import de.metalmatze.krautreporter.KrautreporterRssParser;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleRecyclerViewAdapter;
 import de.metalmatze.krautreporter.entities.Article;
 
 public class MainActivity extends ActionBarActivity {
 
-    private RecyclerView recyclerView;
+    protected RecyclerView recyclerView;
+    protected ArticleRecyclerViewAdapter recyclerViewAdapter;
+
+    private ArrayList<Article> articles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +34,25 @@ public class MainActivity extends ActionBarActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.scrollToPosition(0);
-        recyclerView.setLayoutManager(layoutManager);
+        this.recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<Article> articles = new ArrayList<Article>();
-        ArticleRecyclerViewAdapter adapter = new ArticleRecyclerViewAdapter(articles);
+        BufferedInputStream inputStream = null;
+        try {
 
-        for (int i = 1; i <= 150; i++) {
-            articles.add(new Article(i + ".10.2014", "Artikel Nummer " + i));
-        }
+                inputStream = new BufferedInputStream(getAssets().open("krautreporter.rss"));
+                this.articles = new KrautreporterRssParser().parse(inputStream);
 
-        recyclerView.setAdapter(adapter);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            }
+
+        Log.d("An article", this.articles.get(0).toString());
+
+        this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(this.articles);
+        this.recyclerView.setAdapter(this.recyclerViewAdapter);
+
     }
 
 }
