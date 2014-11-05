@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import de.metalmatze.krautreporter.R;
@@ -32,8 +33,9 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleView
     public void onBindViewHolder(ArticleViewHolder articleViewHolder, int position) {
         Article article = this.articles.get(position);
 
-        articleViewHolder.article_date.setText(article.getDate());
-        articleViewHolder.article_headline.setText(article.getHeadline());
+        String articleDate = new SimpleDateFormat("dd.MM.yyyy").format(article.getDate().getTime());
+        articleViewHolder.article_date.setText(articleDate);
+        articleViewHolder.article_headline.setText(article.getTitle());
     }
 
     @Override
