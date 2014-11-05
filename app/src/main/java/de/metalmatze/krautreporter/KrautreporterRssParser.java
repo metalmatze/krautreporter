@@ -6,12 +6,15 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.metalmatze.krautreporter.entities.Article;
 
@@ -51,23 +54,30 @@ public class KrautreporterRssParser {
                     this.text = this.parser.getText();
                     break;
                 case XmlPullParser.END_TAG:
-                    if (tagName.equalsIgnoreCase("item")) {
+                    if (tagName.equalsIgnoreCase("item"))
+                    {
                         this.articles.add(this.article);
-                    } else if (tagName.equalsIgnoreCase("guid")) {
-                        this.article.setUuid(this.text);
-                    } else if (tagName.equalsIgnoreCase("title")) {
-                        if (this.text != null)
-                            this.article.setTitle(this.text.trim());
                     }
-                    else if (tagName.equalsIgnoreCase("pubDate")) {
+                    else if (tagName.equalsIgnoreCase("guid"))
+                    {
+                        this.article.setUuid(this.text);
+                    }
+                    else if (tagName.equalsIgnoreCase("title"))
+                    {
+                        this.article.setTitle(this.text.trim());
+                    }
+                    else if (tagName.equalsIgnoreCase("pubDate"))
+                    {
                         this.article.setDate(this.parseDate(this.text));
                     }
-                    else if (tagName.equalsIgnoreCase("link")) {
-                        URL link = new URL(this.text);
-                        this.article.setLink(link);
+                    else if (tagName.equalsIgnoreCase("link"))
+                    {
+                        this.article.setLink(new URL(this.text));
                     }
-                    else if (tagName.equalsIgnoreCase("description")) {
-                        this.article.setContent(this.text);
+                    else if (tagName.equalsIgnoreCase("description"))
+                    {
+                        String content = this.parseContent(this.text);
+                        this.article.setContent(content);
                     }
                     break;
                 default:
