@@ -11,15 +11,9 @@ public class Article {
     private URL link;
     private String content;
 
-    public Article() {
-    }
+    private URL teaserImage;
 
-    public Article(String uuid, String title, GregorianCalendar date, URL link, String content) {
-        this.uuid = uuid;
-        this.title = title;
-        this.date = date;
-        this.link = link;
-        this.content = content;
+    public Article() {
     }
 
     public String getUuid() {
@@ -62,6 +56,14 @@ public class Article {
         this.content = content;
     }
 
+    public URL getTeaserImage() {
+        return teaserImage;
+    }
+
+    public void setTeaserImage(URL teaserImage) {
+        this.teaserImage = teaserImage;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -69,6 +71,7 @@ public class Article {
                 ", title='" + title + '\'' +
                 ", date=" + date +
                 ", link=" + link +
+                ", teaserImage=" + teaserImage +
                 ", content='" + content + '\'' +
                 '}';
     }
