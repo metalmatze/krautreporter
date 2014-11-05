@@ -7,10 +7,11 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import de.metalmatze.krautreporter.entities.Article;
 
@@ -59,13 +60,7 @@ public class KrautreporterRssParser {
                             this.article.setTitle(this.text.trim());
                     }
                     else if (tagName.equalsIgnoreCase("pubDate")) {
-                        try {
-                            GregorianCalendar calendar = new GregorianCalendar();
-                            calendar.setTime(DateFormat.getDateTimeInstance().parse(this.text));
-                            this.article.setDate(calendar);
-                        } catch (ParseException e) {
-                            this.article.setDate(new GregorianCalendar());
-                        }
+                        this.article.setDate(this.parseDate(this.text));
                     }
                     else if (tagName.equalsIgnoreCase("link")) {
                         URL link = new URL(this.text);
@@ -83,6 +78,21 @@ public class KrautreporterRssParser {
         }
 
         return this.articles;
+    }
+
+    private GregorianCalendar parseDate(String text) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
+
+        try {
+
+            calendar.setTime(dateFormat.parse(text));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar;
     }
 
 }
