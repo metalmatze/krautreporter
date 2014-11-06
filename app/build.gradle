@@ -9,8 +9,8 @@ android {
         applicationId "de.metalmatze.krautreporter"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 0
+        versionName "0.1"
     }
     buildTypes {
         release {
@@ -24,9 +24,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'com.newrelic.agent.android:android-agent:4.+'
+    compile 'com.newrelic.agent.android:android-agent:4.98.0'
 }
-
 
 buildscript {
     repositories {
@@ -34,7 +33,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.newrelic.agent.android:agent-gradle-plugin:4.+"
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:4.98.0"
     }
 }
 
