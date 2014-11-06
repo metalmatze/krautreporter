@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -39,20 +38,17 @@ public class MainActivity extends ActionBarActivity {
         BufferedInputStream inputStream = null;
         try {
 
-                inputStream = new BufferedInputStream(getAssets().open("krautreporter.rss"));
-                this.articles = new KrautreporterRssParser().parse(inputStream);
+            inputStream = new BufferedInputStream(getAssets().open("krautreporter.rss"));
+            this.articles = new KrautreporterRssParser().parse(inputStream);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            }
-
-        Log.d("An article", this.articles.get(0).toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        }
 
         this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(this.articles);
         this.recyclerView.setAdapter(this.recyclerViewAdapter);
-
     }
 
 }
