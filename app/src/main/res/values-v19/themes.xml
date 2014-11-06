@@ -8,6 +8,7 @@
         <item name="android:windowBackground">@color/krautWindowBackground</item>
         <item name="android:textColor">@color/krautTextColor</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
 </resources>
