@@ -5,6 +5,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.newrelic.agent.android.NewRelic;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedInputStream;
@@ -26,6 +28,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NewRelic.withApplicationToken("AAcd87d4b9197cb6e3184ac6d5b78f1f1d42488de6").start(this.getApplication());
+
         setContentView(R.layout.activity_main);
 
         this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
