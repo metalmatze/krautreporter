@@ -4,5 +4,6 @@
     <string name="app_name" translatable="false">Krautreporter</string>
     <string name="hello_world">Hello Krautreporter!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_article">ArticleActivity</string>
 
 </resources>
