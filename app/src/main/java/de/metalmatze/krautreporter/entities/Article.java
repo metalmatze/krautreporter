@@ -1,17 +1,28 @@
 package de.metalmatze.krautreporter.entities;
 
 import java.net.URL;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 public class Article {
 
     private String uuid;
     private String title;
-    private GregorianCalendar date;
+    private Date date;
     private URL link;
     private String content;
-
     private URL teaserImage;
+
+    public Article() {
+    }
+
+    public Article(String uuid, String title, Date date, URL link, String content, URL teaserImage) {
+        this.uuid = uuid;
+        this.title = title;
+        this.date = date;
+        this.link = link;
+        this.content = content;
+        this.teaserImage = teaserImage;
+    }
 
     public String getUuid() {
         return uuid;
@@ -29,11 +40,11 @@ public class Article {
         this.title = title;
     }
 
-    public GregorianCalendar getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(GregorianCalendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

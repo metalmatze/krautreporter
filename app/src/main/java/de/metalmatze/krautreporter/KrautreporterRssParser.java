@@ -11,7 +11,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,19 +90,17 @@ public class KrautreporterRssParser {
         return this.articles;
     }
 
-    private GregorianCalendar parseDate(String text) {
-        GregorianCalendar calendar = new GregorianCalendar();
+    private Date parseDate(String text) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
 
+        Date date = null;
         try {
-
-            calendar.setTime(dateFormat.parse(text));
-
+            date = dateFormat.parse(text);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        return calendar;
+        return date;
     }
 
     private String parseContent(String text) {
