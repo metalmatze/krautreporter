@@ -30,7 +30,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         NewRelic.withApplicationToken("AAcd87d4b9197cb6e3184ac6d5b78f1f1d42488de6").start(this.getApplication());
 
-        setContentView(R.layout.activity_main);
+        this.setContentView(R.layout.activity_main);
 
         this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -39,10 +39,9 @@ public class MainActivity extends ActionBarActivity {
         layoutManager.scrollToPosition(0);
         this.recyclerView.setLayoutManager(layoutManager);
 
-        BufferedInputStream inputStream = null;
         try {
 
-            inputStream = new BufferedInputStream(getAssets().open("krautreporter.rss"));
+            BufferedInputStream inputStream = new BufferedInputStream(getAssets().open("krautreporter.rss"));
             this.articles = new KrautreporterRssParser().parse(inputStream);
 
         } catch (IOException e) {
