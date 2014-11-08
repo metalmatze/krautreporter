@@ -13,9 +13,6 @@ public class Article {
 
     private URL teaserImage;
 
-    public Article() {
-    }
-
     public String getUuid() {
         return uuid;
     }
