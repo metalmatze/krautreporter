@@ -16,12 +16,12 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.metalmatze.krautreporter.entities.Article;
+import de.metalmatze.krautreporter.models.ArticleModel;
 
 public class KrautreporterRssParser {
 
-    private ArrayList<Article> articles;
-    private Article article;
+    private ArrayList<ArticleModel> articles;
+    private ArticleModel article;
     private String text;
     private static final String ns = null;
     protected XmlPullParser parser;
@@ -30,11 +30,11 @@ public class KrautreporterRssParser {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         this.parser = factory.newPullParser();
-        this.articles = new ArrayList<Article>();
-        this.article = new Article();
+        this.articles = new ArrayList<ArticleModel>();
+        this.article = new ArticleModel();
     }
 
-    public ArrayList<Article> parse(BufferedInputStream bufferedInputStream) throws XmlPullParserException, IOException {
+    public ArrayList<ArticleModel> parse(BufferedInputStream bufferedInputStream) throws XmlPullParserException, IOException {
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         this.parser.setInput(bufferedInputStream, null);
 
@@ -47,7 +47,7 @@ public class KrautreporterRssParser {
             switch (eventType) {
                 case XmlPullParser.START_TAG:
                     if (tagName.equalsIgnoreCase("item")) {
-                        this.article = new Article();
+                        this.article = new ArticleModel();
                     }
                     break;
                 case XmlPullParser.TEXT:
@@ -60,24 +60,24 @@ public class KrautreporterRssParser {
                     }
                     else if (tagName.equalsIgnoreCase("guid"))
                     {
-                        this.article.setUuid(this.text);
+                        this.article.uuid = this.text;
                     }
                     else if (tagName.equalsIgnoreCase("title"))
                     {
-                        this.article.setTitle(this.text.trim());
+                        this.article.title = this.text;
                     }
                     else if (tagName.equalsIgnoreCase("pubDate"))
                     {
-                        this.article.setDate(this.parseDate(this.text));
+                        this.article.date = this.parseDate(this.text);
                     }
                     else if (tagName.equalsIgnoreCase("link"))
                     {
-                        this.article.setLink(new URL(this.text));
+                        this.article.link = new URL(this.text);
                     }
                     else if (tagName.equalsIgnoreCase("description"))
                     {
                         String content = this.parseContent(this.text);
-                        this.article.setContent(content);
+                        this.article.content = content;
                     }
                     break;
                 default:
@@ -117,11 +117,12 @@ public class KrautreporterRssParser {
         while (matcher.find())
         {
             try {
-                this.article.setTeaserImage(new URL("http://krautreporter.de" + matcher.group(2)));
+                this.article.image = new URL("http://krautreporter.de" + matcher.group(2));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
+
     }
 
 }
