@@ -9,19 +9,19 @@ public class Article {
     private String title;
     private Date date;
     private URL link;
+    private URL image;
     private String content;
-    private URL teaserImage;
 
     public Article() {
     }
 
-    public Article(String uuid, String title, Date date, URL link, String content, URL teaserImage) {
+    public Article(String uuid, String title, Date date, URL link, URL image, String content) {
         this.uuid = uuid;
         this.title = title;
         this.date = date;
         this.link = link;
+        this.image = image;
         this.content = content;
-        this.teaserImage = teaserImage;
     }
 
     public String getUuid() {
@@ -56,20 +56,20 @@ public class Article {
         this.link = link;
     }
 
+    public URL getImage() {
+        return image;
+    }
+
+    public void setImage(URL image) {
+        this.image = image;
+    }
+
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public URL getTeaserImage() {
-        return teaserImage;
-    }
-
-    public void setTeaserImage(URL teaserImage) {
-        this.teaserImage = teaserImage;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class Article {
                 ", title='" + title + '\'' +
                 ", date=" + date +
                 ", link=" + link +
-                ", teaserImage=" + teaserImage +
-                ", content='" + content + '\'' +
+                ", image=" + image +
+//                ", content='" + content + '\'' +
                 '}';
     }
 }
