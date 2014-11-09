@@ -13,14 +13,14 @@ import java.util.List;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.activities.ArticleActivity;
-import de.metalmatze.krautreporter.entities.Article;
+import de.metalmatze.krautreporter.models.ArticleModel;
 
 public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecyclerViewAdapter.ViewHolder> {
 
-    private List<Article> articles;
-    private Article article;
+    private List<ArticleModel> articles;
+    private ArticleModel article;
 
-    public ArticleRecyclerViewAdapter(List<Article> articles) {
+    public ArticleRecyclerViewAdapter(List<ArticleModel> articles) {
         this.articles = articles;
     }
 
@@ -38,9 +38,9 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
 
         this.article = this.articles.get(position);
 
-        String articleDate = new SimpleDateFormat("dd.MM.yyyy").format(article.getDate().getTime());
+        String articleDate = new SimpleDateFormat("dd.MM.yyyy").format(article.date.getTime());
         viewHolder.article_date.setText(articleDate);
-        viewHolder.article_headline.setText(article.getTitle());
+        viewHolder.article_headline.setText(article.title);
     }
 
     @Override
@@ -65,6 +65,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
                     Context context = itemView.getContext();
 
                     Intent intent = new Intent(context, ArticleActivity.class);
+                    intent.putExtra("uuid", article.uuid);
                     context.startActivity(intent);
                 }
             });
