@@ -3,6 +3,7 @@ package de.metalmatze.krautreporter.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +57,8 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
         public ViewHolder(final View itemView) {
             super(itemView);
 
-            this.article_date = (TextView) itemView.findViewById(R.id.article_list_date);
-            this.article_headline = (TextView) itemView.findViewById(R.id.article_list_headline);
+            this.article_date = (TextView) itemView.findViewById(R.id.article_date);
+            this.article_headline = (TextView) itemView.findViewById(R.id.article_title);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
