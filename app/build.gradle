@@ -3,7 +3,7 @@ apply plugin: 'newrelic'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    buildToolsVersion "21.1.1"
 
     defaultConfig {
         applicationId "de.metalmatze.krautreporter"
