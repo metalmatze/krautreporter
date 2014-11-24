@@ -1,36 +1,59 @@
 package de.metalmatze.krautreporter.services;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.IBinder;
+import android.content.Context;
 
+import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
-import com.activeandroid.query.Sqlable;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import de.metalmatze.krautreporter.KrautreporterRssParser;
 import de.metalmatze.krautreporter.models.ArticleModel;
 
-public class ArticleService extends Service {
+public class ArticleService {
+
+    private static final String RSS_FILE = "krautreporter.rss";
+
+    protected Context context;
+
+    public ArticleService(Context applicationContext) {
+
+        this.context = applicationContext;
+    }
 
     public List<ArticleModel> all()
     {
-        new SqlExecuter().execute(new Select().from(ArticleModel.class));
-
-        return null;
+        return new Select().from(ArticleModel.class).execute();
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    public void update()
+    {
+        BufferedInputStream inputStream = null;
+        try {
+            inputStream = new BufferedInputStream(this.context.getAssets().open(RSS_FILE));
+            List<ArticleModel> articleModelList = new KrautreporterRssParser.KrautreporterRssParserTask().execute(inputStream).get();
 
-    public static class SqlExecuter extends AsyncTask<Sqlable, Void, Void> {
+            ActiveAndroid.beginTransaction();
+            try {
+                for (ArticleModel articleModel : articleModelList)
+                {
+                    articleModel.save();
+                }
+                ActiveAndroid.setTransactionSuccessful();
+            }
+            finally {
+                ActiveAndroid.endTransaction();
+            }
 
-        @Override
-        protected Void doInBackground(Sqlable... params) {
-            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
     }
 
