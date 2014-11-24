@@ -1,7 +1,6 @@
 package de.metalmatze.krautreporter;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -129,7 +128,7 @@ public class KrautreporterRssParser {
         }
     }
 
-    public static class KrautreporterRssParserTask extends AsyncTask<InputStream, Void, List>
+    public static class KrautreporterRssParserTask extends AsyncTask<InputStream, Void, List<ArticleModel>>
     {
         @Override
         protected List doInBackground(InputStream... params) {
