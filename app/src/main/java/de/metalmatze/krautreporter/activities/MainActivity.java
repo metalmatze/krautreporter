@@ -4,27 +4,25 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.activeandroid.query.Select;
-
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.util.List;
 
-import de.metalmatze.krautreporter.KrautreporterRssParser;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleRecyclerViewAdapter;
 import de.metalmatze.krautreporter.models.ArticleModel;
+import de.metalmatze.krautreporter.services.ArticleService;
 
 public class MainActivity extends ActionBarActivity {
 
     protected RecyclerView recyclerView;
     protected ArticleRecyclerViewAdapter recyclerViewAdapter;
+    protected ArticleService articleService;
 
     private List<ArticleModel> articles;
+
+    public MainActivity() {
+        this.articleService = new ArticleService();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,30 +38,7 @@ public class MainActivity extends ActionBarActivity {
         layoutManager.scrollToPosition(0);
         this.recyclerView.setLayoutManager(layoutManager);
 
-        int count = new Select().from(ArticleModel.class).count();
-
-        Log.d("article count", String.valueOf(count));
-
-        if (count < 1)
-        {
-            try {
-
-                BufferedInputStream inputStream = new BufferedInputStream(getAssets().open("krautreporter.rss"));
-                this.articles = new KrautreporterRssParser().parse(inputStream);
-
-                for (ArticleModel articleModel: this.articles)
-                {
-                    articleModel.save();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            }
-        } else {
-            this.articles = new Select().from(ArticleModel.class).execute();
-        }
+        this.articles = this.articleService.all();
 
         this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(this.articles);
         this.recyclerView.setAdapter(this.recyclerViewAdapter);

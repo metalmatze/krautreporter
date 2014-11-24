@@ -1,17 +1,22 @@
 package de.metalmatze.krautreporter;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -122,7 +127,27 @@ public class KrautreporterRssParser {
                 e.printStackTrace();
             }
         }
+    }
 
+    public static class KrautreporterRssParserTask extends AsyncTask<InputStream, Void, List>
+    {
+        @Override
+        protected List doInBackground(InputStream... params) {
+
+            BufferedInputStream rss = (BufferedInputStream) params[0];
+            try
+            {
+                KrautreporterRssParser rssParser = new KrautreporterRssParser();
+
+                return rssParser.parse(rss);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 
 }
