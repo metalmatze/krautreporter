@@ -30,6 +30,8 @@ public class ArticleActivity extends ActionBarActivity {
         TextView articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
         TextView articleContent = (TextView) findViewById(R.id.article_content);
 
+        getSupportActionBar().setTitle(articleModel.title);
+
         articleTitle.setText(articleModel.title);
         articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
         articleContent.setText(Html.fromHtml(articleModel.content));
