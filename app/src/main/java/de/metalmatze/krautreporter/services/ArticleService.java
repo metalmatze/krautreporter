@@ -29,6 +29,11 @@ public class ArticleService {
         return new Select().from(ArticleModel.class).orderBy("date DESC").execute();
     }
 
+    public ArticleModel find(long id)
+    {
+        return new Select().from(ArticleModel.class).where("id = ?", id).executeSingle();
+    }
+
     public void update()
     {
         BufferedInputStream inputStream = null;
