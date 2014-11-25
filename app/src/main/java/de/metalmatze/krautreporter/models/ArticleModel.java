@@ -4,7 +4,6 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
-import java.net.URL;
 import java.util.Date;
 
 @Table(name = "articles")
@@ -20,10 +19,10 @@ public class ArticleModel extends Model {
     public Date date;
 
     @Column(name = "link")
-    public URL link;
+    public String link;
 
     @Column(name = "image")
-    public URL image;
+    public String image;
 
     @Column(name = "content")
     public String content;

@@ -9,8 +9,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,7 +74,7 @@ public class KrautreporterRssParser {
                     }
                     else if (tagName.equalsIgnoreCase("link"))
                     {
-                        this.article.link = new URL(this.text);
+                        this.article.link = this.text;
                     }
                     else if (tagName.equalsIgnoreCase("description"))
                     {
@@ -120,11 +118,7 @@ public class KrautreporterRssParser {
 
         while (matcher.find())
         {
-            try {
-                this.article.image = new URL("http://krautreporter.de" + matcher.group(2));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            this.article.image = "https://krautreporter.de" + matcher.group(2);
         }
     }
 
