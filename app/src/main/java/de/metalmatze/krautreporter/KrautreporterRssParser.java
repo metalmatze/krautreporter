@@ -6,9 +6,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,9 +35,9 @@ public class KrautreporterRssParser {
         this.article = new ArticleModel();
     }
 
-    public ArrayList<ArticleModel> parse(BufferedInputStream bufferedInputStream) throws XmlPullParserException, IOException {
+    public ArrayList<ArticleModel> parse(String rss) throws XmlPullParserException, IOException {
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-        this.parser.setInput(bufferedInputStream, null);
+        this.parser.setInput(new ByteArrayInputStream(rss.getBytes("UTF-8")), null);
 
         int eventType = this.parser.getEventType();
 
@@ -122,17 +121,17 @@ public class KrautreporterRssParser {
         }
     }
 
-    public static class KrautreporterRssParserTask extends AsyncTask<InputStream, Void, List<ArticleModel>>
+    public static class KrautreporterRssParserTask extends AsyncTask<String, Void, List<ArticleModel>>
     {
         @Override
-        protected List doInBackground(InputStream... params) {
+        protected List<ArticleModel> doInBackground(String... params) {
+            String rss = params[0];
 
-            BufferedInputStream rss = (BufferedInputStream) params[0];
             try
             {
                 KrautreporterRssParser rssParser = new KrautreporterRssParser();
-
                 return rssParser.parse(rss);
+
             } catch (XmlPullParserException e) {
                 e.printStackTrace();
             } catch (IOException e) {
