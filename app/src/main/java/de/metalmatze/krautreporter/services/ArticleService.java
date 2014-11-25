@@ -26,7 +26,7 @@ public class ArticleService {
 
     public List<ArticleModel> all()
     {
-        return new Select().from(ArticleModel.class).execute();
+        return new Select().from(ArticleModel.class).orderBy("date DESC").execute();
     }
 
     public void update()
