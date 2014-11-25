@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,12 +48,12 @@ public class ArticleActivity extends ActionBarActivity {
 
         if (articleModel.image != null)
         {
-            Log.d(this.getClass().getSimpleName(), articleModel.image);
             ImageRequest request = new ImageRequest(articleModel.image,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
-                        articleImage.setImageBitmap(bitmap);
+                    articleImage.setImageBitmap(bitmap);
+                    articleImage.setVisibility(View.VISIBLE);
                     }
                 }
                 , 0, 0, null,
@@ -67,8 +66,6 @@ public class ArticleActivity extends ActionBarActivity {
             );
 
             Volley.newRequestQueue(this).add(request);
-        } else {
-            articleImage.setVisibility(View.GONE);
         }
     }
 
