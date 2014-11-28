@@ -24,7 +24,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.articleService = new ArticleService(getApplicationContext());
-//        NewRelic.withApplicationToken("AAcd87d4b9197cb6e3184ac6d5b78f1f1d42488de6").start(this.getApplication());
 
         this.setContentView(R.layout.activity_main);
 
