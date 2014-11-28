@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
         this.articleService.update();
         this.articles = this.articleService.all();
 
-        this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(this.articles);
+        this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(getApplicationContext(), this.articles);
         this.recyclerView.setAdapter(this.recyclerViewAdapter);
     }
 

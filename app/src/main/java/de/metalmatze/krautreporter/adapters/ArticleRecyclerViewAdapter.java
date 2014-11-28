@@ -17,10 +17,11 @@ import de.metalmatze.krautreporter.models.ArticleModel;
 
 public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecyclerViewAdapter.ViewHolder> {
 
+    protected Context context;
     private List<ArticleModel> articles;
-    private ArticleModel article;
 
-    public ArticleRecyclerViewAdapter(List<ArticleModel> articles) {
+    public ArticleRecyclerViewAdapter(Context context, List<ArticleModel> articles) {
+        this.context = context;
         this.articles = articles;
     }
 
@@ -28,7 +29,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
     public ArticleRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater
                 .from(viewGroup.getContext())
-                .inflate(R.layout.article_list, viewGroup, false);
+                .inflate(R.layout.article_card, viewGroup, false);
 
         return new ViewHolder(itemView);
     }
@@ -36,7 +37,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
     @Override
     public void onBindViewHolder(ArticleRecyclerViewAdapter.ViewHolder viewHolder, int position) {
 
-        this.article = this.articles.get(position);
+	this.article = this.articles.get(position);
 
         String articleDate = new SimpleDateFormat("dd.MM.yyyy").format(article.date.getTime());
         viewHolder.article_date.setText(articleDate);
@@ -50,13 +51,13 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView article_date;
+	public TextView article_date;
         public TextView article_headline;
 
         public ViewHolder(final View itemView) {
             super(itemView);
 
-            this.article_date = (TextView) itemView.findViewById(R.id.article_date);
+	    this.article_date = (TextView) itemView.findViewById(R.id.article_date);
             this.article_headline = (TextView) itemView.findViewById(R.id.article_title);
 
             itemView.setOnClickListener(new View.OnClickListener() {
