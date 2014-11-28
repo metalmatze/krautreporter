@@ -75,17 +75,17 @@ public class ArticleService {
 
     private void saveModels(List<ArticleModel> models)
     {
-            ActiveAndroid.beginTransaction();
-            try {
-                for (ArticleModel article : models)
-                {
-                    article.save();
-                }
-                ActiveAndroid.setTransactionSuccessful();
+        ActiveAndroid.beginTransaction();
+        try {
+            for (ArticleModel article : models)
+            {
+                article.save();
             }
-            finally {
-                ActiveAndroid.endTransaction();
-            }
+            ActiveAndroid.setTransactionSuccessful();
+        }
+        finally {
+            ActiveAndroid.endTransaction();
+        }
     }
 
 }
