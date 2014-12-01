@@ -40,17 +40,19 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/headline" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="date"
                 android:id="@+id/article_date"
-                android:textColor="#89000000"
                 android:layout_below="@+id/article_title"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@color/subhead" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -60,7 +62,9 @@
                 android:layout_below="@+id/article_date"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:textColor="@color/body"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1" />
         </RelativeLayout>
 
     </RelativeLayout>
