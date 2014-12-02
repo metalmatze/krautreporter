@@ -20,7 +20,7 @@ import java.util.List;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.ArticleModel;
 
-public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecyclerViewAdapter.ViewHolder> {
+public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
         public void onItemClick(ArticleModel articleModel);
@@ -30,14 +30,14 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
     private List<ArticleModel> articles;
     protected OnItemClickListener itemClickListener;
 
-    public ArticleRecyclerViewAdapter(Context context, OnItemClickListener itemClickListener, List<ArticleModel> articles) {
+    public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<ArticleModel> articles) {
         this.context = context;
         this.itemClickListener = itemClickListener;
         this.articles = articles;
     }
 
     @Override
-    public ArticleRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ArticlesAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.article_card, viewGroup, false);
@@ -46,7 +46,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
     }
 
     @Override
-    public void onBindViewHolder(final ArticleRecyclerViewAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final ArticlesAdapter.ViewHolder viewHolder, int position) {
 
         final ArticleModel article = this.articles.get(position);
 

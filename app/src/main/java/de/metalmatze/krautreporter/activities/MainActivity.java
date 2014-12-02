@@ -9,14 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import java.util.List;
 
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.adapters.ArticleRecyclerViewAdapter;
+import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
 import de.metalmatze.krautreporter.models.ArticleModel;
 import de.metalmatze.krautreporter.services.ArticleService;
 
-public class MainActivity extends ActionBarActivity implements ArticleRecyclerViewAdapter.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener {
 
     protected RecyclerView recyclerView;
-    protected ArticleRecyclerViewAdapter recyclerViewAdapter;
+    protected ArticlesAdapter recyclerViewAdapter;
     protected ArticleService articleService;
 
     private List<ArticleModel> articles;
@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements ArticleRecyclerVi
         this.articleService.update();
         this.articles = this.articleService.all();
 
-        this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(getApplicationContext(), this, this.articles);
+        this.recyclerViewAdapter = new ArticlesAdapter(getApplicationContext(), this, this.articles);
         this.recyclerView.setAdapter(this.recyclerViewAdapter);
     }
 
