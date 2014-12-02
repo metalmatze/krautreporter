@@ -1,7 +1,6 @@
 package de.metalmatze.krautreporter.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,16 +18,21 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.activities.ArticleActivity;
 import de.metalmatze.krautreporter.models.ArticleModel;
 
 public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecyclerViewAdapter.ViewHolder> {
 
+    public interface OnItemClickListener {
+        public void onItemClick(ArticleModel articleModel);
+    }
+
     protected Context context;
     private List<ArticleModel> articles;
+    protected OnItemClickListener itemClickListener;
 
-    public ArticleRecyclerViewAdapter(Context context, List<ArticleModel> articles) {
+    public ArticleRecyclerViewAdapter(Context context, OnItemClickListener itemClickListener, List<ArticleModel> articles) {
         this.context = context;
+        this.itemClickListener = itemClickListener;
         this.articles = articles;
     }
 
@@ -44,11 +48,18 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
     @Override
     public void onBindViewHolder(final ArticleRecyclerViewAdapter.ViewHolder viewHolder, int position) {
 
-        ArticleModel article = this.articles.get(position);
+        final ArticleModel article = this.articles.get(position);
 
         String articleDate = new SimpleDateFormat("dd.MM.yyyy").format(article.date.getTime());
         viewHolder.article_date.setText(articleDate);
         viewHolder.article_headline.setText(article.title);
+
+        viewHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemClickListener.onItemClick(article);
+            }
+        });
 
         if (article.image != null)
         {
@@ -83,6 +94,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        private final View itemView;
         public ImageView article_image;
         public TextView article_headline;
         public TextView article_date;
@@ -91,23 +103,17 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
         public ViewHolder(final View itemView) {
             super(itemView);
 
+            this.itemView = itemView;
+
             this.article_image = (ImageView) itemView.findViewById(R.id.article_image);
             this.article_headline = (TextView) itemView.findViewById(R.id.article_title);
             this.article_date = (TextView) itemView.findViewById(R.id.article_date);
             this.article_excerpt = (TextView) itemView.findViewById(R.id.article_excerpt);
+        }
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = itemView.getContext();
-
-                    ArticleModel articleModel = articles.get(getPosition());
-
-                    Intent intent = new Intent(context, ArticleActivity.class);
-                    intent.putExtra("id", articleModel.getId());
-                    context.startActivity(intent);
-                }
-            });
+        public void setOnClickListener(View.OnClickListener listener)
+        {
+            this.itemView.setOnClickListener(listener);
         }
 
     }

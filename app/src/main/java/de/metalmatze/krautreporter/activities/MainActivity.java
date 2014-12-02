@@ -1,5 +1,6 @@
 package de.metalmatze.krautreporter.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,7 @@ import de.metalmatze.krautreporter.adapters.ArticleRecyclerViewAdapter;
 import de.metalmatze.krautreporter.models.ArticleModel;
 import de.metalmatze.krautreporter.services.ArticleService;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ArticleRecyclerViewAdapter.OnItemClickListener {
 
     protected RecyclerView recyclerView;
     protected ArticleRecyclerViewAdapter recyclerViewAdapter;
@@ -37,8 +38,15 @@ public class MainActivity extends ActionBarActivity {
         this.articleService.update();
         this.articles = this.articleService.all();
 
-        this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(getApplicationContext(), this.articles);
+        this.recyclerViewAdapter = new ArticleRecyclerViewAdapter(getApplicationContext(), this, this.articles);
         this.recyclerView.setAdapter(this.recyclerViewAdapter);
     }
 
+    @Override
+    public void onItemClick(ArticleModel articleModel) {
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra("id", articleModel.getId());
+
+        this.startActivity(intent);
+    }
 }
