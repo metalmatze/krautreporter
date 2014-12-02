@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.text.Spanned;
+import android.text.util.Linkify;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,9 +44,13 @@ public class ArticleActivity extends ActionBarActivity {
 
         getSupportActionBar().setTitle(articleModel.title);
 
+        Spanned contentFromHtml = Html.fromHtml(articleModel.content);
+
         articleTitle.setText(articleModel.title);
         articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
-        articleContent.setText(Html.fromHtml(articleModel.content));
+        articleContent.setText(contentFromHtml);
+
+        Linkify.addLinks(articleContent, Linkify.WEB_URLS);
 
         if (articleModel.image != null)
         {
