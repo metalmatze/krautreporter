@@ -32,14 +32,29 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.scrollToPosition(0);
         this.recyclerView.setLayoutManager(layoutManager);
 
         this.articleService.update();
         this.articles = this.articleService.all();
 
-        this.recyclerViewAdapter = new ArticlesAdapter(getApplicationContext(), this, this.articles);
-        this.recyclerView.setAdapter(this.recyclerViewAdapter);
+        this.setArticles(this.articles);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        List<ArticleModel> articles = this.articleService.all();
+
+        if (this.articles.size() < articles.size()) {
+            this.setArticles(articles);
+        }
+    }
+
+    public void setArticles(List<ArticleModel> articles) {
+        this.articles = articles;
+        ArticlesAdapter articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, this.articles);
+        this.recyclerView.setAdapter(articlesAdapter);
     }
 
     @Override
