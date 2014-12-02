@@ -4,11 +4,12 @@
     android:id="@+id/scrollView"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="de.metalmatze.krautreporter.activities.ArticleActivity"
-    android:nestedScrollingEnabled="true">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="de.metalmatze.krautreporter.activities.ArticleActivity">
 
     <TextView
         android:layout_width="fill_parent"
@@ -22,7 +23,6 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:nestedScrollingEnabled="true"
         android:textColor="@color/headline" />
 
     <TextView
@@ -47,30 +47,15 @@
         android:visibility="gone" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-        android:text="@string/ipsum"
-        android:id="@+id/article_excerpt"
-        android:layout_below="@+id/article_image"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:textStyle="bold"
-        android:textIsSelectable="true"
-        android:textColor="@color/body"
-        android:visibility="gone" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
         android:text="@string/ipsum"
         android:id="@+id/article_content"
-        android:layout_below="@+id/article_excerpt"
         android:padding="@dimen/activity_horizontal_margin"
         android:textIsSelectable="true"
-        android:textColor="@color/body" />
+        android:textColor="@color/body"
+        android:layout_below="@+id/article_image" />
 
 </RelativeLayout>
 
