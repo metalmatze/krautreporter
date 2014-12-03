@@ -5,6 +5,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.List;
 
@@ -12,11 +17,12 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
 import de.metalmatze.krautreporter.models.ArticleModel;
 import de.metalmatze.krautreporter.services.ArticleService;
+import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener, Response.ErrorListener, Response.Listener {
 
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     protected RecyclerView recyclerView;
-    protected ArticlesAdapter recyclerViewAdapter;
     protected ArticleService articleService;
 
     private List<ArticleModel> articles;
@@ -24,6 +30,8 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+
         this.articleService = new ArticleService(getApplicationContext());
 
         this.setContentView(R.layout.activity_main);
@@ -34,9 +42,9 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         this.recyclerView.setLayoutManager(layoutManager);
 
-        this.articleService.update();
-        this.articles = this.articleService.all();
+        this.articleService.update(this, this);
 
+        this.articles = this.articleService.all();
         this.setArticles(this.articles);
     }
 
@@ -46,9 +54,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
         List<ArticleModel> articles = this.articleService.all();
 
-        if (this.articles.size() < articles.size()) {
-            this.setArticles(articles);
-        }
+        this.setArticles(articles);
     }
 
     public void setArticles(List<ArticleModel> articles) {
@@ -64,4 +70,19 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
         this.startActivity(intent);
     }
+
+    @Override
+    public void onResponse(Object response) {
+        List<ArticleModel> responseArticles = (List<ArticleModel>) response;
+
+        List<ArticleModel> articles = this.articleService.saveModels(responseArticles);
+
+        this.setArticles(articles);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Toast.makeText(this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+    }
+
 }
