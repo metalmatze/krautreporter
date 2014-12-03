@@ -1,18 +1,15 @@
 package de.metalmatze.krautreporter;
 
-import android.os.AsyncTask;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,9 +32,9 @@ public class KrautreporterRssParser {
         this.article = new ArticleModel();
     }
 
-    public ArrayList<ArticleModel> parse(String rss) throws XmlPullParserException, IOException {
+    public ArrayList<ArticleModel> parse(InputStream inputStream) throws XmlPullParserException, IOException {
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-        this.parser.setInput(new ByteArrayInputStream(rss.getBytes("UTF-8")), null);
+        this.parser.setInput(inputStream, "UTF-8");
 
         int eventType = this.parser.getEventType();
 
@@ -118,27 +115,6 @@ public class KrautreporterRssParser {
         while (matcher.find())
         {
             this.article.image = "https://krautreporter.de" + matcher.group(2);
-        }
-    }
-
-    public static class KrautreporterRssParserTask extends AsyncTask<String, Void, List<ArticleModel>>
-    {
-        @Override
-        protected List<ArticleModel> doInBackground(String... params) {
-            String rss = params[0];
-
-            try
-            {
-                KrautreporterRssParser rssParser = new KrautreporterRssParser();
-                return rssParser.parse(rss);
-
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
         }
     }
 
