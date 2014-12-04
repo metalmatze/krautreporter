@@ -1,4 +1,4 @@
-krautreporter
+Krautreporter
 =============
 
 Krautreporter is an android app for krautreporter.de with Material Design.
