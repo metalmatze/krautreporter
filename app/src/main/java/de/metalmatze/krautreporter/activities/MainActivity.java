@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import java.util.List;
 
@@ -17,7 +16,6 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
 import de.metalmatze.krautreporter.models.ArticleModel;
 import de.metalmatze.krautreporter.services.ArticleService;
-import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener, Response.ErrorListener, Response.Listener {
 
@@ -30,7 +28,6 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
 
         this.articleService = new ArticleService(getApplicationContext());
 
