@@ -6,3 +6,4 @@
 /build
 /app/crashlytics.properties
 /app/src/main/res/values/apis.xml
+/app/app-release.apk
