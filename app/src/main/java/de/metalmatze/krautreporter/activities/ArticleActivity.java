@@ -49,6 +49,7 @@ public class ArticleActivity extends ActionBarActivity {
         articleTitle.setText(articleModel.title);
         articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
         articleContent.setText(contentFromHtml);
+        articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
 
         Linkify.addLinks(articleContent, Linkify.WEB_URLS);
 
