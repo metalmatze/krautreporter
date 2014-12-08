@@ -31,8 +31,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.metalmatze.krautreporter.activities.MainActivity" />
         </activity>
-
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="@string/crashlytics"/>
     </application>
 
 </manifest>
