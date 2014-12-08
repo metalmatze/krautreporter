@@ -54,6 +54,7 @@
         android:id="@+id/article_content"
         android:padding="@dimen/activity_horizontal_margin"
         android:textIsSelectable="true"
+        android:focusable="false"
         android:textColor="@color/body"
         android:layout_below="@+id/article_image" />
 
