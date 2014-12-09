@@ -24,6 +24,9 @@ public class ArticleModel extends Model {
     @Column(name = "image")
     public String image;
 
+    @Column(name = "excerpt")
+    public String excerpt;
+
     @Column(name = "content")
     public String content;
 

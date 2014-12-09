@@ -48,6 +48,8 @@ public class ArticleActivity extends ActionBarActivity {
 
         articleTitle.setText(articleModel.title);
         articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
+        articleExcerpt.setText(articleModel.excerpt);
+
         articleContent.setText(contentFromHtml);
         articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
 

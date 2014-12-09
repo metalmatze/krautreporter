@@ -56,6 +56,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
         viewHolder.setDate(dateFormat.format(article.date.getTime()));
         viewHolder.setHeadline(article.title);
+        viewHolder.setExcerpt(article.excerpt);
 
         if (article.image != null)
         {
@@ -94,7 +95,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final View view;
         private final ImageView article_image;
         private final TextView article_headline;
         private final TextView article_date;
@@ -114,7 +114,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         {
             super(itemView);
 
-            this.view = itemView;
             this.article_image = image;
             this.article_headline = headline;
             this.article_date = date;
