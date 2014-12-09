@@ -21,14 +21,13 @@ public class KrautreporterRssParser {
     private ArrayList<ArticleModel> articles;
     private ArticleModel article;
     private String text;
-    private static final String ns = null;
     protected XmlPullParser parser;
 
     public KrautreporterRssParser() throws XmlPullParserException {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         this.parser = factory.newPullParser();
-        this.articles = new ArrayList<ArticleModel>();
+        this.articles = new ArrayList<>();
         this.article = new ArticleModel();
     }
 
@@ -103,19 +102,38 @@ public class KrautreporterRssParser {
 
     private String parseContent(String text) {
 
-        this.parseTeaserImage(text);
+        text = this.parseTeaserImage(text);
+        text = this.parseExcerpt(text);
 
         return text;
     }
 
-    private void parseTeaserImage(String text) {
-        Pattern pattern = Pattern.compile("(<img src=')(.*(teaser_image).*)('\\/>)");
+    private String parseTeaserImage(String text) {
+        Pattern pattern = Pattern.compile("(<img src=')(.*(teaser_image).*)('\\/>)(.*)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(text);
 
         while (matcher.find())
         {
             this.article.image = "https://krautreporter.de" + matcher.group(2);
+
+            return matcher.group(5);
         }
+
+        return text;
+    }
+
+    private String parseExcerpt(String text) {
+        Pattern pattern = Pattern.compile("(<p><\\/p>)*(<p>(.+?)<\\/p>)(.*)", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find())
+        {
+            this.article.excerpt = matcher.group(3);
+
+            return matcher.group(4);
+        }
+
+        return text;
     }
 
 }
