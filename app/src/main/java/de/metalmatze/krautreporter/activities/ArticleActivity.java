@@ -1,11 +1,15 @@
 package de.metalmatze.krautreporter.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.util.Linkify;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,6 +28,7 @@ import de.metalmatze.krautreporter.services.ArticleService;
 public class ArticleActivity extends ActionBarActivity {
 
     protected ArticleService articleService;
+    private ArticleModel articleModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,8 @@ public class ArticleActivity extends ActionBarActivity {
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         long id = getIntent().getLongExtra("id", -1);
-        ArticleModel articleModel = this.articleService.find(id);
+
+        this.articleModel = this.articleService.find(id);
 
         TextView articleTitle = (TextView) findViewById(R.id.article_title);
         TextView articleDate = (TextView) findViewById(R.id.article_date);
@@ -78,4 +84,26 @@ public class ArticleActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        this.getMenuInflater().inflate(R.menu.menu_article, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.action_browser)
+        {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            intent.setData(Uri.parse(this.articleModel.link));
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
