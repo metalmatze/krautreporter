@@ -23,7 +23,8 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:textColor="@color/headline" />
+        android:textColor="@color/headline"
+        android:textIsSelectable="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,7 +35,8 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-        android:textColor="@color/subhead" />
+        android:textColor="@color/subhead"
+        android:textIsSelectable="true" />
 
     <ImageView
         android:layout_width="fill_parent"
@@ -54,9 +56,9 @@
         android:id="@+id/article_excerpt"
         android:padding="@dimen/activity_horizontal_margin"
         android:textIsSelectable="true"
-        android:focusable="false"
         android:textColor="@color/body"
-        android:layout_below="@+id/article_image" />
+        android:layout_below="@+id/article_image"
+        android:textSize="18dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -66,9 +68,9 @@
         android:id="@+id/article_content"
         android:padding="@dimen/activity_horizontal_margin"
         android:textIsSelectable="true"
-        android:focusable="false"
         android:textColor="@color/body"
-        android:layout_below="@+id/article_excerpt" />
+        android:layout_below="@+id/article_excerpt"
+        android:textSize="16dp" />
 
 </RelativeLayout>
 
