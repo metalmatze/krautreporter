@@ -2,12 +2,16 @@ package de.metalmatze.krautreporter.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.util.Linkify;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +29,7 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.ArticleModel;
 import de.metalmatze.krautreporter.services.ArticleService;
 
-public class ArticleActivity extends ActionBarActivity {
+public class ArticleActivity extends ActionBarActivity implements Html.ImageGetter {
 
     protected ArticleService articleService;
     private ArticleModel articleModel;
@@ -50,16 +54,28 @@ public class ArticleActivity extends ActionBarActivity {
 
         getSupportActionBar().setTitle(articleModel.title);
 
-        Spanned contentFromHtml = Html.fromHtml(articleModel.content);
+        Spanned contentFromHtml = Html.fromHtml(articleModel.content, this, null);
+        SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
 
-        articleTitle.setText(articleModel.title);
-        articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
-        articleExcerpt.setText(articleModel.excerpt);
 
-        articleContent.setText(contentFromHtml);
-        articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
+        URLSpan[] urlSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), URLSpan.class);
+        for (final URLSpan urlSpan : urlSpans)
+        {
+            int start = contentStringBuilder.getSpanStart(urlSpan);
+            int end = contentStringBuilder.getSpanEnd(urlSpan);
 
-        Linkify.addLinks(articleContent, Linkify.WEB_URLS);
+            contentStringBuilder.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(urlSpan.getURL()));
+
+                    startActivity(intent);
+                }
+            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            contentStringBuilder.removeSpan(urlSpan);
+        }
 
         if (articleModel.image != null)
         {
@@ -82,6 +98,14 @@ public class ArticleActivity extends ActionBarActivity {
 
             Volley.newRequestQueue(this).add(request);
         }
+
+        articleTitle.setText(articleModel.title);
+        articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
+        articleExcerpt.setText(articleModel.excerpt);
+
+        articleContent.setText(contentStringBuilder);
+        articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
+        articleContent.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -105,5 +129,10 @@ public class ArticleActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Drawable getDrawable(String source) {
+        return null;
     }
 }
