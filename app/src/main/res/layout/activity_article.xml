@@ -58,7 +58,7 @@
         android:textIsSelectable="true"
         android:textColor="@color/body"
         android:layout_below="@+id/article_image"
-        android:textSize="18dp" />
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,7 +70,7 @@
         android:textIsSelectable="true"
         android:textColor="@color/body"
         android:layout_below="@+id/article_excerpt"
-        android:textSize="16dp" />
+        android:textSize="16sp" />
 
 </RelativeLayout>
 
