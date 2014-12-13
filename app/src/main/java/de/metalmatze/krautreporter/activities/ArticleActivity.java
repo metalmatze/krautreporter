@@ -2,6 +2,7 @@ package de.metalmatze.krautreporter.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -106,6 +107,9 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
         articleContent.setText(contentStringBuilder);
         articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
         articleContent.setMovementMethod(LinkMovementMethod.getInstance());
+
+        Typeface typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
+        articleContent.setTypeface(typefaceTisaSans);
     }
 
     @Override
