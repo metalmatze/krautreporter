@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -25,6 +26,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.ArticleModel;
@@ -35,29 +37,83 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
     protected ArticleService articleService;
     private ArticleModel articleModel;
 
+    private TextView articleTitle;
+    private TextView articleDate;
+    private ImageView articleImage;
+    private TextView articleExcerpt;
+    private TextView articleContent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.articleService = new ArticleService(getApplicationContext());
 
-        this.setContentView(R.layout.activity_article);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_article);
+
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         long id = getIntent().getLongExtra("id", -1);
 
         this.articleModel = this.articleService.find(id);
 
-        TextView articleTitle = (TextView) findViewById(R.id.article_title);
-        TextView articleDate = (TextView) findViewById(R.id.article_date);
-        final ImageView articleImage = (ImageView) findViewById(R.id.article_image);
-        TextView articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
-        TextView articleContent = (TextView) findViewById(R.id.article_content);
+        this.articleTitle = (TextView) findViewById(R.id.article_title);
+        this.articleDate = (TextView) findViewById(R.id.article_date);
+        this.articleImage = (ImageView) findViewById(R.id.article_image);
+        this.articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
+        this.articleContent = (TextView) findViewById(R.id.article_content);
 
-        getSupportActionBar().setTitle(articleModel.title);
+        setTitle(articleModel.title);
+        setDate(articleModel.date);
+        setImage(articleModel.image);
+        setExcerpt(articleModel.excerpt);
+        setContent(articleModel.content);
+    }
 
-        Spanned contentFromHtml = Html.fromHtml(articleModel.content, this, null);
+    private void setExcerpt(String excerpt) {
+        this.articleExcerpt.setText(excerpt);
+    }
+
+    private void setTitle(String title) {
+        getSupportActionBar().setTitle(title);
+
+        this.articleTitle.setText(title);
+    }
+
+    private void setDate(Date date) {
+        String dateFormated = new SimpleDateFormat("dd.MM.yyyy").format(date.getTime());
+        this.articleDate.setText(dateFormated);
+    }
+
+    private void setImage(String image) {
+        if (image != null)
+        {
+            ImageRequest request = new ImageRequest(image,
+                    new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap bitmap) {
+                            articleImage.setImageBitmap(bitmap);
+                            articleImage.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    , 0, 0, null,
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            volleyError.printStackTrace();
+                        }
+                    }
+            );
+
+            Volley.newRequestQueue(this).add(request);
+        }
+    }
+
+    private void setContent(String content) {
+        Spanned contentFromHtml = Html.fromHtml(content, this, null);
         SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
-
 
         URLSpan[] urlSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), URLSpan.class);
         for (final URLSpan urlSpan : urlSpans)
@@ -78,38 +134,12 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
             contentStringBuilder.removeSpan(urlSpan);
         }
 
-        if (articleModel.image != null)
-        {
-            ImageRequest request = new ImageRequest(articleModel.image,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap bitmap) {
-                    articleImage.setImageBitmap(bitmap);
-                    articleImage.setVisibility(View.VISIBLE);
-                    }
-                }
-                , 0, 0, null,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.printStackTrace();
-                    }
-                }
-            );
-
-            Volley.newRequestQueue(this).add(request);
-        }
-
-        articleTitle.setText(articleModel.title);
-        articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(articleModel.date.getTime()));
-        articleExcerpt.setText(articleModel.excerpt);
+        Typeface typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
 
         articleContent.setText(contentStringBuilder);
+        articleContent.setTypeface(typefaceTisaSans);
         articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
         articleContent.setMovementMethod(LinkMovementMethod.getInstance());
-
-        Typeface typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
-        articleContent.setTypeface(typefaceTisaSans);
     }
 
     @Override
