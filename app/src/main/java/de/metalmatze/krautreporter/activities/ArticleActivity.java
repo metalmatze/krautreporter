@@ -43,10 +43,16 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
     private TextView articleExcerpt;
     private TextView articleContent;
 
+    Typeface typefaceTisaSans;
+    Typeface typefaceTisaSansBold;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         this.articleService = new ArticleService(getApplicationContext());
+        this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
+        this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
 
         setContentView(R.layout.activity_article);
 
@@ -74,17 +80,19 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
 
     private void setExcerpt(String excerpt) {
         this.articleExcerpt.setText(excerpt);
+        this.articleExcerpt.setTypeface(typefaceTisaSansBold);
     }
 
     private void setTitle(String title) {
         getSupportActionBar().setTitle(title);
-
         this.articleTitle.setText(title);
+        this.articleTitle.setTypeface(typefaceTisaSansBold);
     }
 
     private void setDate(Date date) {
         String dateFormated = new SimpleDateFormat("dd.MM.yyyy").format(date.getTime());
         this.articleDate.setText(dateFormated);
+        this.articleDate.setTypeface(typefaceTisaSans);
     }
 
     private void setImage(String image) {
@@ -133,8 +141,6 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
 
             contentStringBuilder.removeSpan(urlSpan);
         }
-
-        Typeface typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
 
         articleContent.setText(contentStringBuilder);
         articleContent.setTypeface(typefaceTisaSans);
