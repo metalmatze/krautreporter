@@ -2,6 +2,7 @@ package de.metalmatze.krautreporter.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
                 .from(viewGroup.getContext())
                 .inflate(R.layout.article_card, viewGroup, false);
 
-        return ViewHolder.newInstance(itemView);
+        return ViewHolder.newInstance(context, itemView);
     }
 
     @Override
@@ -100,12 +101,19 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         private final TextView article_date;
         private final TextView article_excerpt;
 
-        public static ViewHolder newInstance(View view)
+        public static ViewHolder newInstance(Context context, View view)
         {
             ImageView image = (ImageView) view.findViewById(R.id.article_image);
             TextView headline = (TextView) view.findViewById(R.id.article_title);
             TextView date = (TextView) view.findViewById(R.id.article_date);
             TextView excerpt = (TextView) view.findViewById(R.id.article_excerpt);
+
+            Typeface typefaceTisaSans = Typeface.createFromAsset(context.getAssets(), "fonts/TisaSans.otf");
+            Typeface typefaceTisaSansBold = Typeface.createFromAsset(context.getAssets(), "fonts/TisaSans-Bold.otf");
+
+            headline.setTypeface(typefaceTisaSansBold);
+            date.setTypeface(typefaceTisaSans);
+            excerpt.setTypeface(typefaceTisaSans);
 
             return new ViewHolder(view, image, headline, date, excerpt);
         }

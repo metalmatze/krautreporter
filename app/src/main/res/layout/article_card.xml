@@ -64,7 +64,7 @@
                 android:layout_marginTop="8dp"
                 android:textColor="@color/body"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-                android:textSize="16dp" />
+                android:textSize="@dimen/abc_text_size_medium_material" />
         </RelativeLayout>
 
     </RelativeLayout>
