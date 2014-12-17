@@ -8,3 +8,4 @@
 /app/src/main/res/values/apis.xml
 /app/app-release.apk
 /app/manifest-merger-release-report.txt
+/app/src/main/res/values/com_crashlytics_export_strings.xml
