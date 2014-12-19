@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 21
@@ -8,7 +9,7 @@ android {
         applicationId "de.metalmatze.krautreporter"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 2
+        versionCode 4
         versionName "0.1"
     }
     buildTypes {
@@ -16,20 +17,36 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.2'
     compile 'com.mcxiaoke.volley:library:1.0.7'
+    compile('com.crashlytics.sdk.android:crashlytics:2.1.0@aar') {
+        transitive = true;
+    }
 }
 
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://maven.fabric.io/repo' }
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'io.fabric.tools:gradle:1.14.4'
+    }
+}
 
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabric.io/repo' }
 }
