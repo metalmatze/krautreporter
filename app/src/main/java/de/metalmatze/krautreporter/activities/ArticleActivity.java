@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
@@ -35,22 +37,24 @@ import de.metalmatze.krautreporter.services.ArticleService;
 public class ArticleActivity extends ActionBarActivity implements Html.ImageGetter {
 
     protected ArticleService articleService;
-    private ArticleModel articleModel;
+    protected RequestQueue requestsQueue;
 
+    private ArticleModel articleModel;
     private TextView articleTitle;
     private TextView articleDate;
     private ImageView articleImage;
     private TextView articleExcerpt;
     private TextView articleContent;
-
-    Typeface typefaceTisaSans;
-    Typeface typefaceTisaSansBold;
+    private Typeface typefaceTisaSans;
+    private Typeface typefaceTisaSansBold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.articleService = new ArticleService(getApplicationContext());
+        this.requestsQueue = Volley.newRequestQueue(this);
+
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
         this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
 
@@ -115,13 +119,13 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
                     }
             );
 
-            Volley.newRequestQueue(this).add(request);
+            this.requestsQueue.add(request);
         }
     }
 
     private void setContent(String content) {
         Spanned contentFromHtml = Html.fromHtml(content, this, null);
-        SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
+        final SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
 
         URLSpan[] urlSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), URLSpan.class);
         for (final URLSpan urlSpan : urlSpans)
@@ -140,6 +144,38 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
             }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             contentStringBuilder.removeSpan(urlSpan);
+        }
+
+        ImageSpan[] imageSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), ImageSpan.class);
+        for (final ImageSpan imageSpan : imageSpans)
+        {
+            final int start = contentStringBuilder.getSpanStart(imageSpan);
+            final int end = contentStringBuilder.getSpanEnd(imageSpan);
+
+            final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource();
+
+            ImageRequest imageRequest = new ImageRequest(imageUrl,
+                    new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap response) {
+
+                            ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), response);
+                            contentStringBuilder.setSpan(newImageSpan, start, end, ImageSpan.ALIGN_BASELINE);
+                            contentStringBuilder.removeSpan(imageSpan);
+                            articleContent.setText(contentStringBuilder);
+
+                        }
+                    },
+                    0, 0, null,
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    }
+            );
+
+            this.requestsQueue.add(imageRequest);
         }
 
         articleContent.setText(contentStringBuilder);
