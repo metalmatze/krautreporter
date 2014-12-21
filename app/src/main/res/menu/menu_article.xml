@@ -6,7 +6,7 @@
         android:id="@+id/action_share"
         android:title="@string/share"
         android:icon="@drawable/ic_share_white"
-        yourapp:showAsAction="ifRoom|withText"
+        yourapp:showAsAction="ifRoom"
     />
 
     <item
