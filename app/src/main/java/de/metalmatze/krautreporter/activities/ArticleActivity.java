@@ -82,6 +82,29 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
         setContent(articleModel.content);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        this.getMenuInflater().inflate(R.menu.menu_article, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.action_browser)
+        {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            intent.setData(Uri.parse(this.articleModel.link));
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setExcerpt(String excerpt) {
         this.articleExcerpt.setText(excerpt);
         this.articleExcerpt.setTypeface(typefaceTisaSansBold);
@@ -182,29 +205,6 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
         articleContent.setTypeface(typefaceTisaSans);
         articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
         articleContent.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        this.getMenuInflater().inflate(R.menu.menu_article, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if(id == R.id.action_browser)
-        {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-
-            intent.setData(Uri.parse(this.articleModel.link));
-            startActivity(intent);
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
