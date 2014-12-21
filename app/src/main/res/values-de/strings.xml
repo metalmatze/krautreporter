@@ -2,5 +2,6 @@
 
     <string name="action_settings">Einstellungen</string>
     <string name="action_open_in_browser">Im Browser öffnen</string>
+    <string name="share">Teilen</string>
 
 </resources>

@@ -3,10 +3,17 @@
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_share"
+        android:title="@string/share"
+        android:icon="@drawable/ic_share_white"
+        yourapp:showAsAction="ifRoom|withText"
+    />
+
+    <item
         android:id="@+id/action_browser"
         android:title="@string/action_open_in_browser"
         android:icon="@drawable/ic_open_in_browser_white"
-        yourapp:showAsAction="ifRoom|withText"
+        yourapp:showAsAction="never"
     />
 
 </menu>
