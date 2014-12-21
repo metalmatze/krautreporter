@@ -9,7 +9,7 @@ android {
         applicationId "de.metalmatze.krautreporter"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 4
+        versionCode 5
         versionName "0.1"
     }
     buildTypes {
