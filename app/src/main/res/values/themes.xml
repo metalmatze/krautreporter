@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/krautPrimary</item>
         <item name="colorPrimaryDark">@color/krautPrimaryDark</item>
         <item name="colorAccent">@color/krautAccent</item>
         <item name="android:windowBackground">@color/krautWindowBackground</item>
         <item name="android:textColor">@color/krautTextColor</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
 </resources>

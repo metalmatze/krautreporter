@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/share"
+        android:icon="@drawable/ic_share_white"
+        yourapp:showAsAction="ifRoom"
+    />
 
     <item
         android:id="@+id/action_browser"
         android:title="@string/action_open_in_browser"
-        android:icon="@drawable/ic_open_in_browser_black_48dp"
-        android:showAsAction="always"
+        android:icon="@drawable/ic_open_in_browser_white"
+        yourapp:showAsAction="never"
     />
 
 </menu>
+ 

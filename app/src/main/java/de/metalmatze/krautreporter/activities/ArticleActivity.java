@@ -69,17 +69,50 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
 
         this.articleModel = this.articleService.find(id);
 
-        this.articleTitle = (TextView) findViewById(R.id.article_title);
-        this.articleDate = (TextView) findViewById(R.id.article_date);
-        this.articleImage = (ImageView) findViewById(R.id.article_image);
-        this.articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
-        this.articleContent = (TextView) findViewById(R.id.article_content);
+        articleTitle = (TextView) findViewById(R.id.article_title);
+        articleDate = (TextView) findViewById(R.id.article_date);
+        articleImage = (ImageView) findViewById(R.id.article_image);
+        articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
+        articleContent = (TextView) findViewById(R.id.article_content);
 
         setTitle(articleModel.title);
         setDate(articleModel.date);
         setImage(articleModel.image);
         setExcerpt(articleModel.excerpt);
         setContent(articleModel.content);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_article, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.action_browser)
+        {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            intent.setData(Uri.parse(this.articleModel.link));
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_share)
+        {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.articleModel.title);
+            intent.putExtra(Intent.EXTRA_TEXT, this.articleModel.link);
+
+            startActivity(Intent.createChooser(intent, getString(R.string.share_article)));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setExcerpt(String excerpt) {
@@ -119,7 +152,7 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
                     }
             );
 
-            this.requestsQueue.add(request);
+            requestsQueue.add(request);
         }
     }
 
@@ -175,36 +208,13 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
                     }
             );
 
-            this.requestsQueue.add(imageRequest);
+            requestsQueue.add(imageRequest);
         }
 
         articleContent.setText(contentStringBuilder);
         articleContent.setTypeface(typefaceTisaSans);
         articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
         articleContent.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        this.getMenuInflater().inflate(R.menu.menu_article, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if(id == R.id.action_browser)
-        {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-
-            intent.setData(Uri.parse(this.articleModel.link));
-            startActivity(intent);
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
