@@ -109,7 +109,7 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
             intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.articleModel.title);
             intent.putExtra(Intent.EXTRA_TEXT, this.articleModel.link);
 
-            startActivity(Intent.createChooser(intent, "Share article"));
+            startActivity(Intent.createChooser(intent, getString(R.string.share_article)));
         }
 
         return super.onOptionsItemSelected(item);
