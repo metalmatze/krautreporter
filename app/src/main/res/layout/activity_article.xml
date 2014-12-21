@@ -47,7 +47,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:adjustViewBounds="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:paddingLeft="@dimen/article_image_margin_horizontal"
+        android:paddingRight="@dimen/article_image_margin_horizontal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -55,11 +57,14 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:text="@string/ipsum"
         android:id="@+id/article_excerpt"
-        android:padding="@dimen/activity_margin_horizontal"
         android:textIsSelectable="true"
         android:textColor="@color/body"
         android:layout_below="@+id/article_image"
-        android:textSize="@dimen/abc_text_size_medium_material" />
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:paddingLeft="@dimen/article_margin_horizontal"
+        android:paddingRight="@dimen/article_margin_horizontal"
+        android:paddingTop="@dimen/activity_margin_vertical"
+        android:paddingBottom="@dimen/activity_margin_vertical" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -67,7 +72,10 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
         android:text="@string/ipsum"
         android:id="@+id/article_content"
-        android:padding="@dimen/activity_margin_horizontal"
+        android:paddingLeft="@dimen/article_margin_horizontal"
+        android:paddingRight="@dimen/article_margin_horizontal"
+        android:paddingTop="@dimen/activity_margin_vertical"
+        android:paddingBottom="@dimen/activity_margin_vertical"
         android:textIsSelectable="true"
         android:textColor="@color/body"
         android:layout_below="@+id/article_excerpt"
