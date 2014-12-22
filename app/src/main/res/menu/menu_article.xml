@@ -12,7 +12,6 @@
     <item
         android:id="@+id/action_browser"
         android:title="@string/action_open_in_browser"
-        android:icon="@drawable/ic_open_in_browser_white"
         yourapp:showAsAction="never"
     />
 
