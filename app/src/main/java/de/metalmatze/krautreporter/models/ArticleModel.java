@@ -30,4 +30,15 @@ public class ArticleModel extends Model {
     @Column(name = "content")
     public String content;
 
+    @Override
+    public String toString() {
+        return "ArticleModel{" +
+                "uuid='" + uuid + '\'' +
+                ", title='" + title + '\'' +
+                ", date=" + date +
+                ", link='" + link + '\'' +
+                ", image='" + image + '\'' +
+                ", excerpt='" + excerpt + '\'' +
+                '}';
+    }
 }
