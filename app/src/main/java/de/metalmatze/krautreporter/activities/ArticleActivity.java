@@ -32,7 +32,7 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.ArticleModel;
 import de.metalmatze.krautreporter.services.ArticleService;
 
-public class ArticleActivity extends ActionBarActivity implements Html.ImageGetter {
+public class ArticleActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = ArticleActivity.class.getSimpleName();
     protected ArticleService articleService;
@@ -139,7 +139,7 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
     }
 
     private void setContent(final String content) {
-        Spanned contentFromHtml = Html.fromHtml(content, this, null);
+        Spanned contentFromHtml = Html.fromHtml(content);
         final SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
 
         URLSpan[] urlSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), URLSpan.class);
@@ -198,8 +198,4 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
         articleContent.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    @Override
-    public Drawable getDrawable(String source) {
-        return null;
-    }
 }
