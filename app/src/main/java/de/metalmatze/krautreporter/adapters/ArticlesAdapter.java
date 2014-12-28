@@ -3,6 +3,7 @@ package de.metalmatze.krautreporter.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,12 +29,17 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     }
 
     protected Context context;
-    private List<ArticleModel> articles;
     protected OnItemClickListener itemClickListener;
+    protected Picasso picasso;
+
+    private List<ArticleModel> articles;
 
     public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<ArticleModel> articles) {
         this.context = context;
         this.itemClickListener = itemClickListener;
+        this.picasso = Picasso.with(context);
+        this.picasso.setIndicatorsEnabled(true);
+
         this.articles = articles;
     }
 
@@ -61,24 +65,23 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
         if (article.image != null)
         {
-            ImageRequest imageRequest = new ImageRequest(
-                    article.image,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap bitmap) {
-                            viewHolder.setImage(bitmap);
-                        }
-                    },
-                    0,0,null,
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.printStackTrace();
-                        }
-                    }
-            );
+            viewHolder.setImageInvisible();
 
-            Volley.newRequestQueue(this.context).add(imageRequest);
+            picasso.load(article.image).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    viewHolder.setImage(bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            });
         }
 
         viewHolder.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +134,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         public void setImage(Bitmap bitmap) {
             this.article_image.setImageBitmap(bitmap);
             this.article_image.setVisibility(View.VISIBLE);
+        }
+
+        public void setImageInvisible() {
+            this.article_image.setVisibility(View.INVISIBLE);
         }
 
         public void setHeadline(String headline) {
