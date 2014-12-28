@@ -38,7 +38,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         this.context = context;
         this.itemClickListener = itemClickListener;
         this.picasso = Picasso.with(context);
-        this.picasso.setIndicatorsEnabled(true);
 
         this.articles = articles;
     }

@@ -53,7 +53,6 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
 
         this.articleService = new ArticleService(getApplicationContext());
         picasso = Picasso.with(this);
-        picasso.setIndicatorsEnabled(true);
 
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
         this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
