@@ -8,5 +8,6 @@
     <string name="url_base" translatable="false">https://krautreporter.de</string>
     <string name="share">Share</string>
     <string name="share_article">Share article</string>
+    <string name="error_response_rss">Sorry, not able to update articles.</string>
 
 </resources>
