@@ -47,8 +47,6 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(articlesAdapter);
 
-        setArticles(articles);
-
         articleService.update(this, this);
     }
 
@@ -56,11 +54,10 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
     protected void onResume() {
         super.onResume();
 
-        List<ArticleModel> articles = this.articleService.all();
-        setArticles(articles);
+        refreshArticles(articleService.all());
     }
 
-    public void setArticles(List<ArticleModel> articles) {
+    public void refreshArticles(List<ArticleModel> articles) {
 
         articles.removeAll(this.articles);
         this.articles.addAll(articles);
@@ -78,11 +75,9 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
     @Override
     public void onResponse(Object response) {
-        List<ArticleModel> responseArticles = (List<ArticleModel>) response;
+        List<ArticleModel> articles = articleService.saveModels((List<ArticleModel>) response);
 
-        List<ArticleModel> articles = this.articleService.saveModels(responseArticles);
-
-        this.setArticles(articles);
+        refreshArticles(articles);
     }
 
     @Override
