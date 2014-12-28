@@ -14,6 +14,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
+import android.text.style.QuoteSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.Menu;
@@ -190,6 +191,18 @@ public class ArticleActivity extends ActionBarActivity {
 
                 }
             });
+        }
+
+        QuoteSpan[] quoteSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), QuoteSpan.class);
+        for (QuoteSpan oldQuoteSpan : quoteSpans) {
+            int start = contentStringBuilder.getSpanStart(oldQuoteSpan);
+            int end = contentStringBuilder.getSpanEnd(oldQuoteSpan);
+
+            QuoteSpan quoteSpan = new QuoteSpan(0xff000000);
+
+            contentStringBuilder.removeSpan(oldQuoteSpan);
+            contentStringBuilder.setSpan(quoteSpan, start, end, 0);
+
         }
 
         articleContent.setText(contentStringBuilder);
