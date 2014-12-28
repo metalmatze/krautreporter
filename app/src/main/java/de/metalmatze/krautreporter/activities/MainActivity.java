@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.error_response_rss), Toast.LENGTH_SHORT).show();
     }
 
 }
