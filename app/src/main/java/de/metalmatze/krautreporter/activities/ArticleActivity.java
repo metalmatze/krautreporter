@@ -15,17 +15,15 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,8 +34,9 @@ import de.metalmatze.krautreporter.services.ArticleService;
 
 public class ArticleActivity extends ActionBarActivity implements Html.ImageGetter {
 
+    private static final String LOG_TAG = ArticleActivity.class.getSimpleName();
     protected ArticleService articleService;
-    protected RequestQueue requestsQueue;
+    protected Picasso picasso;
 
     private ArticleModel articleModel;
     private TextView articleTitle;
@@ -53,7 +52,8 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
         super.onCreate(savedInstanceState);
 
         this.articleService = new ArticleService(getApplicationContext());
-        this.requestsQueue = Volley.newRequestQueue(this);
+        picasso = Picasso.with(this);
+        picasso.setIndicatorsEnabled(true);
 
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
         this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
@@ -133,30 +133,13 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
     }
 
     private void setImage(String image) {
-        if (image != null)
-        {
-            ImageRequest request = new ImageRequest(image,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap bitmap) {
-                            articleImage.setImageBitmap(bitmap);
-                            articleImage.setVisibility(View.VISIBLE);
-                        }
-                    }
-                    , 0, 0, null,
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.printStackTrace();
-                        }
-                    }
-            );
-
-            requestsQueue.add(request);
+        if (image != null) {
+            picasso.load(image).into(articleImage);
+            articleImage.setVisibility(View.VISIBLE);
         }
     }
 
-    private void setContent(String content) {
+    private void setContent(final String content) {
         Spanned contentFromHtml = Html.fromHtml(content, this, null);
         final SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
 
@@ -187,28 +170,27 @@ public class ArticleActivity extends ActionBarActivity implements Html.ImageGett
 
             final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource();
 
-            ImageRequest imageRequest = new ImageRequest(imageUrl,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap response) {
+            picasso.load(imageUrl).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), bitmap);
+                    contentStringBuilder.setSpan(newImageSpan, start, end, ImageSpan.ALIGN_BASELINE);
+                    contentStringBuilder.removeSpan(imageSpan);
+                    articleContent.setText(contentStringBuilder);
+                }
 
-                            ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), response);
-                            contentStringBuilder.setSpan(newImageSpan, start, end, ImageSpan.ALIGN_BASELINE);
-                            contentStringBuilder.removeSpan(imageSpan);
-                            articleContent.setText(contentStringBuilder);
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    contentStringBuilder.removeSpan(imageSpan);
+                    articleContent.setText(contentStringBuilder);
+                    Log.d(LOG_TAG, String.format("%s could not be loaded.", imageUrl));
+                }
 
-                        }
-                    },
-                    0, 0, null,
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
-                        }
-                    }
-            );
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-            requestsQueue.add(imageRequest);
+                }
+            });
         }
 
         articleContent.setText(contentStringBuilder);
