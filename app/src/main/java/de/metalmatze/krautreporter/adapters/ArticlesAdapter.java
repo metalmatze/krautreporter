@@ -8,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +30,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     public interface OnItemClickListener {
         public void onItemClick(ArticleModel articleModel);
     }
+
+    public static final int IMAGE_FADEIN_DURATION = 300;
 
     protected Context context;
     protected OnItemClickListener itemClickListener;
@@ -64,7 +69,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
         if (article.image != null)
         {
-            viewHolder.setImageInvisible();
+            viewHolder.setImageVisibility(View.INVISIBLE);
 
             picasso.load(article.image).into(new Target() {
                 @Override
@@ -74,13 +79,16 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-
+                    viewHolder.setImageVisibility(View.GONE);
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
                 }
             });
+        }
+        else {
+            viewHolder.setImageVisibility(View.GONE);
         }
 
         viewHolder.setOnClickListener(new View.OnClickListener() {
@@ -131,12 +139,18 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         }
 
         public void setImage(Bitmap bitmap) {
-            this.article_image.setImageBitmap(bitmap);
-            this.article_image.setVisibility(View.VISIBLE);
+            Animation fadeIn = new AlphaAnimation(0, 1);
+            fadeIn.setInterpolator(new AccelerateInterpolator());
+            fadeIn.setDuration(IMAGE_FADEIN_DURATION);
+            fadeIn.setFillAfter(true);
+
+            article_image.setImageBitmap(bitmap);
+            article_image.setAnimation(fadeIn);
         }
 
-        public void setImageInvisible() {
-            this.article_image.setVisibility(View.INVISIBLE);
+
+        public void setImageVisibility(int visibility) {
+            this.article_image.setVisibility(visibility);
         }
 
         public void setHeadline(String headline) {
