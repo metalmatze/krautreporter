@@ -23,6 +23,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     protected RecyclerView recyclerView;
+    protected ArticlesAdapter articlesAdapter;
     protected ArticleService articleService;
 
     private List<ArticleModel> articles;
@@ -32,20 +33,23 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
 
-        this.articleService = new ArticleService(getApplicationContext());
+        setContentView(R.layout.activity_main);
 
-        this.setContentView(R.layout.activity_main);
-
-        this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        articleService = new ArticleService(getApplicationContext());
+        articles = articleService.all();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        this.recyclerView.setLayoutManager(layoutManager);
 
-        this.articleService.update(this, this);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, articles);
 
-        this.articles = this.articleService.all();
-        this.setArticles(this.articles);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(articlesAdapter);
+
+        setArticles(articles);
+
+        articleService.update(this, this);
     }
 
     @Override
@@ -53,14 +57,15 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         super.onResume();
 
         List<ArticleModel> articles = this.articleService.all();
-
-        this.setArticles(articles);
+        setArticles(articles);
     }
 
     public void setArticles(List<ArticleModel> articles) {
-        this.articles = articles;
-        ArticlesAdapter articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, this.articles);
-        this.recyclerView.setAdapter(articlesAdapter);
+
+        articles.removeAll(this.articles);
+        this.articles.addAll(articles);
+
+        articlesAdapter.notifyDataSetChanged();
     }
 
     @Override
