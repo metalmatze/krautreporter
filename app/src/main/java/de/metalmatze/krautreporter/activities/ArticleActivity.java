@@ -168,7 +168,7 @@ public class ArticleActivity extends ActionBarActivity {
             final int start = contentStringBuilder.getSpanStart(imageSpan);
             final int end = contentStringBuilder.getSpanEnd(imageSpan);
 
-            final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource();
+            final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource().replace("/w300_", "/w1000_");
 
             picasso.load(imageUrl).into(new Target() {
                 @Override
@@ -177,18 +177,17 @@ public class ArticleActivity extends ActionBarActivity {
                     contentStringBuilder.setSpan(newImageSpan, start, end, ImageSpan.ALIGN_BASELINE);
                     contentStringBuilder.removeSpan(imageSpan);
                     articleContent.setText(contentStringBuilder);
+                    Log.d(LOG_TAG, String.format("content with new image %s", imageUrl));
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    contentStringBuilder.removeSpan(imageSpan);
-                    articleContent.setText(contentStringBuilder);
-                    Log.d(LOG_TAG, String.format("%s could not be loaded.", imageUrl));
+                    Log.d(LOG_TAG, String.format("Picasso fails to load: %s", imageUrl));
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-
+                    Log.d(LOG_TAG, String.format("Picasso prepares to load: %s", imageUrl));
                 }
             });
         }
