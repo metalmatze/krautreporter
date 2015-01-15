@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Locale;
 
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.models.ArticleModel;
+import de.metalmatze.krautreporter.models.Article;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-        public void onItemClick(ArticleModel articleModel);
+        public void onItemClick(Article article);
     }
 
     public static final int IMAGE_FADEIN_DURATION = 300;
@@ -37,9 +37,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     protected OnItemClickListener itemClickListener;
     protected Picasso picasso;
 
-    private List<ArticleModel> articles;
+    private List<Article> articles;
 
-    public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<ArticleModel> articles) {
+    public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<Article> articles) {
         this.context = context;
         this.itemClickListener = itemClickListener;
         this.picasso = Picasso.with(context);
@@ -59,19 +59,19 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ArticlesAdapter.ViewHolder viewHolder, int position) {
 
-        final ArticleModel article = this.articles.get(position);
+        final Article article = this.articles.get(position);
 
         DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.getDefault());
 
-        viewHolder.setDate(dateFormat.format(article.date.getTime()));
-        viewHolder.setHeadline(article.title);
-        viewHolder.setExcerpt(article.excerpt);
+        viewHolder.setDate(dateFormat.format(article.getDate().getTime()));
+        viewHolder.setHeadline(article.getTitle());
+        viewHolder.setExcerpt(article.getExcerpt());
 
-        if (article.image != null)
+        if (article.getImage() != null)
         {
             viewHolder.setImageVisibility(View.INVISIBLE);
 
-            picasso.load(article.image).into(new Target() {
+            picasso.load(article.getImage()).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     viewHolder.setImage(bitmap);
