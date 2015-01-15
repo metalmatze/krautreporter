@@ -3,15 +3,18 @@ package de.metalmatze.krautreporter.services;
 import android.content.Context;
 
 import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import de.metalmatze.krautreporter.helpers.RssRequest;
+import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.ArticleModel;
 
 public class ArticleService {
@@ -26,14 +29,22 @@ public class ArticleService {
         this.context = applicationContext;
     }
 
-    public List<ArticleModel> all()
+    public List<Article> all()
     {
-        return new Select().from(ArticleModel.class).orderBy("date DESC").execute();
+        List<Article> articles = new LinkedList<>();
+        List<Model> models = new Select().from(ArticleModel.class).orderBy("date DESC").execute();
+
+        for (Model model : models)
+        {
+            articles.add((Article) model);
+        }
+
+        return articles;
     }
 
-    public ArticleModel find(long id)
+    public Article find(long id)
     {
-        return new Select().from(ArticleModel.class).where("id = ?", id).executeSingle();
+        return (Article) new Select().from(ArticleModel.class).where("id = ?", id).executeSingle();
     }
 
     public void update(Response.Listener listener, Response.ErrorListener errorListener)
@@ -42,11 +53,11 @@ public class ArticleService {
         requestQueue.add(new RssRequest(Request.Method.GET, RSS_HOST + RSS_FILE, listener, errorListener));
     }
 
-    public List<ArticleModel> saveModels(List<ArticleModel> models)
+    public List<Article> saveModels(List<Article> models)
     {
         ActiveAndroid.beginTransaction();
         try {
-            for (ArticleModel article : models)
+            for (Article article : models)
             {
                 article.save();
             }

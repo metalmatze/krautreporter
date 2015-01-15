@@ -15,7 +15,7 @@ import java.util.List;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
-import de.metalmatze.krautreporter.models.ArticleModel;
+import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
 import io.fabric.sdk.android.Fabric;
 
@@ -26,7 +26,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
     protected ArticlesAdapter articlesAdapter;
     protected ArticleService articleService;
 
-    private List<ArticleModel> articles;
+    private List<Article> articles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         refreshArticles(articleService.all());
     }
 
-    public void refreshArticles(List<ArticleModel> articles) {
+    public void refreshArticles(List<Article> articles) {
 
         articles.removeAll(this.articles);
         this.articles.addAll(articles);
@@ -66,16 +66,16 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
     }
 
     @Override
-    public void onItemClick(ArticleModel articleModel) {
+    public void onItemClick(Article article) {
         Intent intent = new Intent(this, ArticleActivity.class);
-        intent.putExtra("id", articleModel.getId());
+        intent.putExtra("id", article.getId());
 
         this.startActivity(intent);
     }
 
     @Override
     public void onResponse(Object response) {
-        List<ArticleModel> articles = articleService.saveModels((List<ArticleModel>) response);
+        List<Article> articles = articleService.saveModels((List<Article>) response);
 
         refreshArticles(articles);
     }

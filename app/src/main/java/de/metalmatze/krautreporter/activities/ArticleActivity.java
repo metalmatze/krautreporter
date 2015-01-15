@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.models.ArticleModel;
+import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
 
 public class ArticleActivity extends ActionBarActivity {
@@ -39,7 +39,7 @@ public class ArticleActivity extends ActionBarActivity {
     protected ArticleService articleService;
     protected Picasso picasso;
 
-    private ArticleModel articleModel;
+    private Article article;
     private TextView articleTitle;
     private TextView articleDate;
     private ImageView articleImage;
@@ -67,7 +67,7 @@ public class ArticleActivity extends ActionBarActivity {
 
         long id = getIntent().getLongExtra("id", -1);
 
-        this.articleModel = this.articleService.find(id);
+        this.article = this.articleService.find(id);
 
         articleTitle = (TextView) findViewById(R.id.article_title);
         articleDate = (TextView) findViewById(R.id.article_date);
@@ -75,11 +75,11 @@ public class ArticleActivity extends ActionBarActivity {
         articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
         articleContent = (TextView) findViewById(R.id.article_content);
 
-        setTitle(articleModel.title);
-        setDate(articleModel.date);
-        setImage(articleModel.image);
-        setExcerpt(articleModel.excerpt);
-        setContent(articleModel.content);
+        setTitle(article.getTitle());
+        setDate(article.getDate());
+        setImage(article.getImage());
+        setExcerpt(article.getExcerpt());
+        setContent(article.getContent());
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ArticleActivity extends ActionBarActivity {
         {
             Intent intent = new Intent(Intent.ACTION_VIEW);
 
-            intent.setData(Uri.parse(this.articleModel.link));
+            intent.setData(Uri.parse(this.article.getLink()));
             startActivity(intent);
         }
 
@@ -106,8 +106,8 @@ public class ArticleActivity extends ActionBarActivity {
         {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.articleModel.title);
-            intent.putExtra(Intent.EXTRA_TEXT, this.articleModel.link);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());
+            intent.putExtra(Intent.EXTRA_TEXT, this.article.getLink());
 
             startActivity(Intent.createChooser(intent, getString(R.string.share_article)));
         }
