@@ -4,28 +4,27 @@ import java.util.Date;
 
 public interface Article {
 
-    public String getUuid();
-    public void setUuid(String uuid);
+    Long getId();
+    Long save();
 
-    public String getTitle();
-    public void setTitle(String title);
+    String getUuid();
+    void setUuid(String uuid);
 
-    public Date getDate();
-    public void setDate(Date date);
+    String getTitle();
+    void setTitle(String title);
 
-    public String getLink();
-    public void setLink(String link);
+    Date getDate();
+    void setDate(Date date);
 
-    public String getImage();
-    public void setImage(String image);
+    String getLink();
+    void setLink(String link);
 
-    public String getExcerpt();
-    public void setExcerpt(String excerpt);
+    String getImage();
+    void setImage(String image);
 
-    public String getContent();
-    public void setContent(String content);
+    String getExcerpt();
+    void setExcerpt(String excerpt);
 
-    public Long getId();
-    public Long save();
-
+    String getContent();
+    void setContent(String content);
 }
