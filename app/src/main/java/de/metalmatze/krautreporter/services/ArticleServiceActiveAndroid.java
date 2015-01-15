@@ -17,18 +17,19 @@ import de.metalmatze.krautreporter.helpers.RssRequest;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.ArticleModel;
 
-public class ArticleService {
+public class ArticleServiceActiveAndroid implements ArticleService {
 
     private static final String RSS_HOST = "https://krautreporter.de/";
     private static final String RSS_FILE = "rss.rss";
 
     protected Context context;
 
-    public ArticleService(Context applicationContext) {
+    public ArticleServiceActiveAndroid(Context applicationContext) {
 
         this.context = applicationContext;
     }
 
+    @Override
     public List<Article> all()
     {
         List<Article> articles = new LinkedList<>();
@@ -42,18 +43,21 @@ public class ArticleService {
         return articles;
     }
 
+    @Override
     public Article find(long id)
     {
         return (Article) new Select().from(ArticleModel.class).where("id = ?", id).executeSingle();
     }
 
+    @Override
     public void update(Response.Listener listener, Response.ErrorListener errorListener)
     {
         RequestQueue requestQueue = Volley.newRequestQueue(this.context);
         requestQueue.add(new RssRequest(Request.Method.GET, RSS_HOST + RSS_FILE, listener, errorListener));
     }
 
-    public List<Article> saveModels(List<Article> models)
+    @Override
+    public List<Article> save(List<Article> models)
     {
         ActiveAndroid.beginTransaction();
         try {
