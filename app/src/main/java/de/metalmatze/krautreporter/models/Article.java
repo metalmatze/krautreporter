@@ -25,4 +25,7 @@ public interface Article {
     public String getContent();
     public void setContent(String content);
 
+    public Long getId();
+    public Long save();
+
 }
