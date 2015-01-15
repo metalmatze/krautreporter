@@ -16,6 +16,7 @@ import java.util.List;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
 import de.metalmatze.krautreporter.models.Article;
+import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 import de.metalmatze.krautreporter.services.ArticleService;
 import io.fabric.sdk.android.Fabric;
 
@@ -35,7 +36,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
         setContentView(R.layout.activity_main);
 
-        articleService = new ArticleService(getApplicationContext());
+        articleService = new ArticleServiceActiveAndroid(this);
         articles = articleService.all();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -75,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
     @Override
     public void onResponse(Object response) {
-        List<Article> articles = articleService.saveModels((List<Article>) response);
+        List<Article> articles = articleService.save((List<Article>) response);
 
         refreshArticles(articles);
     }

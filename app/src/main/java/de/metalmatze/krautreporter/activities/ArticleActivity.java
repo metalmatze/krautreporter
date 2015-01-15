@@ -31,6 +31,7 @@ import java.util.Date;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
+import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 import de.metalmatze.krautreporter.services.ArticleService;
 
 public class ArticleActivity extends ActionBarActivity {
@@ -52,7 +53,7 @@ public class ArticleActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.articleService = new ArticleService(getApplicationContext());
+        this.articleService = new ArticleServiceActiveAndroid(this);
         picasso = Picasso.with(this);
 
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
