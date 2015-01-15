@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.crashlytics.android.Crashlytics;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.metalmatze.krautreporter.R;
@@ -59,11 +60,15 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
     }
 
     public void refreshArticles(List<Article> articles) {
-
         articles.removeAll(this.articles);
-        this.articles.addAll(articles);
 
-        articlesAdapter.notifyDataSetChanged();
+        Collections.reverse(articles);
+
+        for (Article article : articles)
+        {
+            this.articles.add(0, article);
+            articlesAdapter.notifyItemInserted(0);
+        }
     }
 
     @Override
@@ -71,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         Intent intent = new Intent(this, ArticleActivity.class);
         intent.putExtra("id", article.getId());
 
-        this.startActivity(intent);
+        startActivity(intent);
     }
 
     @Override
