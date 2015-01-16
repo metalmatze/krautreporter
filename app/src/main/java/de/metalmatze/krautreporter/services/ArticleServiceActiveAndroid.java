@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,11 +58,11 @@ public class ArticleServiceActiveAndroid implements ArticleService {
     }
 
     @Override
-    public List<Article> save(List<Article> models)
+    public List<Article> save(List<Article> articles)
     {
         ActiveAndroid.beginTransaction();
         try {
-            for (Article article : models)
+            for (Article article : articles)
             {
                 article.save();
             }
@@ -72,6 +73,15 @@ public class ArticleServiceActiveAndroid implements ArticleService {
         }
 
         return this.all();
+    }
+
+    @Override
+    public void fetchImages(List<Article> articles) {
+        for (Article article : articles) {
+            if (article.getImage() != null) {
+                Picasso.with(context).load(article.getImage()).fetch();
+            }
+        }
     }
 
 }

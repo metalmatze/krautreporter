@@ -17,8 +17,8 @@ import java.util.List;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 import de.metalmatze.krautreporter.services.ArticleService;
+import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener, Response.ErrorListener, Response.Listener {
@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
         articleService = new ArticleServiceActiveAndroid(this);
         articles = articleService.all();
+        articleService.fetchImages(articles);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -63,6 +64,8 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         articles.removeAll(this.articles);
 
         Collections.reverse(articles);
+
+        articleService.fetchImages(articles);
 
         for (Article article : articles)
         {

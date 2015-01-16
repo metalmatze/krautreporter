@@ -10,10 +10,12 @@ public interface ArticleService {
 
     List<Article> all();
 
-    List<Article> save(List<Article> models);
+    List<Article> save(List<Article> articles);
 
     Article find(long id);
 
     void update(Response.Listener listener, Response.ErrorListener errorListener);
+
+    void fetchImages(List<Article> articles);
 
 }
