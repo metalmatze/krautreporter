@@ -14,21 +14,21 @@ import java.io.InputStream;
 import java.util.List;
 
 import de.metalmatze.krautreporter.KrautreporterRssParser;
-import de.metalmatze.krautreporter.models.ArticleModel;
+import de.metalmatze.krautreporter.models.Article;
 
-public class RssRequest extends Request<List<ArticleModel>> {
+public class RssRequest extends Request<List<Article>> {
 
-    private final Response.Listener<List<ArticleModel>> responseListener;
+    private final Response.Listener<List<Article>> responseListener;
 
-    public RssRequest(int method, String url, Response.Listener<List<ArticleModel>> responseListener, Response.ErrorListener errorListener) {
+    public RssRequest(int method, String url, Response.Listener<List<Article>> responseListener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.responseListener = responseListener;
     }
 
     @Override
-    protected Response<List<ArticleModel>> parseNetworkResponse(NetworkResponse response) {
+    protected Response<List<Article>> parseNetworkResponse(NetworkResponse response) {
 
-        List<ArticleModel> articles;
+        List<Article> articles;
 
         try {
 
@@ -47,7 +47,7 @@ public class RssRequest extends Request<List<ArticleModel>> {
     }
 
     @Override
-    protected void deliverResponse(List<ArticleModel> response) {
+    protected void deliverResponse(List<Article> response) {
         this.responseListener.onResponse(response);
     }
 }

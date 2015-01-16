@@ -25,3 +25,4 @@
 -keepattributes Column
 -keepattributes Table
 -keepclasseswithmembers class * { @com.activeandroid.annotation.Column <fields>; }
+-dontwarn com.squareup.okhttp.**

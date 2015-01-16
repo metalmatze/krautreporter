@@ -3,17 +3,19 @@ package de.metalmatze.krautreporter.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,21 +23,27 @@ import java.util.List;
 import java.util.Locale;
 
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.models.ArticleModel;
+import de.metalmatze.krautreporter.models.Article;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-        public void onItemClick(ArticleModel articleModel);
+        public void onItemClick(Article article);
     }
 
-    protected Context context;
-    private List<ArticleModel> articles;
-    protected OnItemClickListener itemClickListener;
+    public static final int IMAGE_FADEIN_DURATION = 300;
 
-    public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<ArticleModel> articles) {
+    protected Context context;
+    protected OnItemClickListener itemClickListener;
+    protected Picasso picasso;
+
+    private List<Article> articles;
+
+    public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<Article> articles) {
         this.context = context;
         this.itemClickListener = itemClickListener;
+        this.picasso = Picasso.with(context);
+
         this.articles = articles;
     }
 
@@ -51,34 +59,36 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ArticlesAdapter.ViewHolder viewHolder, int position) {
 
-        final ArticleModel article = this.articles.get(position);
+        final Article article = this.articles.get(position);
 
         DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.getDefault());
 
-        viewHolder.setDate(dateFormat.format(article.date.getTime()));
-        viewHolder.setHeadline(article.title);
-        viewHolder.setExcerpt(article.excerpt);
+        viewHolder.setDate(dateFormat.format(article.getDate().getTime()));
+        viewHolder.setHeadline(article.getTitle());
+        viewHolder.setExcerpt(article.getExcerpt());
 
-        if (article.image != null)
+        if (article.getImage() != null)
         {
-            ImageRequest imageRequest = new ImageRequest(
-                    article.image,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap bitmap) {
-                            viewHolder.setImage(bitmap);
-                        }
-                    },
-                    0,0,null,
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.printStackTrace();
-                        }
-                    }
-            );
+            viewHolder.setImageVisibility(View.INVISIBLE);
 
-            Volley.newRequestQueue(this.context).add(imageRequest);
+            picasso.load(article.getImage()).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    viewHolder.setImage(bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    viewHolder.setImageVisibility(View.GONE);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            });
+        }
+        else {
+            viewHolder.setImageVisibility(View.GONE);
         }
 
         viewHolder.setOnClickListener(new View.OnClickListener() {
@@ -129,8 +139,18 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         }
 
         public void setImage(Bitmap bitmap) {
-            this.article_image.setImageBitmap(bitmap);
-            this.article_image.setVisibility(View.VISIBLE);
+            Animation fadeIn = new AlphaAnimation(0, 1);
+            fadeIn.setInterpolator(new AccelerateInterpolator());
+            fadeIn.setDuration(IMAGE_FADEIN_DURATION);
+            fadeIn.setFillAfter(true);
+
+            article_image.setImageBitmap(bitmap);
+            article_image.setAnimation(fadeIn);
+        }
+
+
+        public void setImageVisibility(int visibility) {
+            this.article_image.setVisibility(visibility);
         }
 
         public void setHeadline(String headline) {

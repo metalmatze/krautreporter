@@ -14,12 +14,13 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.ArticleModel;
 
 public class KrautreporterRssParser {
 
-    private ArrayList<ArticleModel> articles;
-    private ArticleModel article;
+    private ArrayList<Article> articles;
+    private Article article;
     private String text;
     protected XmlPullParser parser;
 
@@ -31,7 +32,7 @@ public class KrautreporterRssParser {
         this.article = new ArticleModel();
     }
 
-    public ArrayList<ArticleModel> parse(InputStream inputStream) throws XmlPullParserException, IOException {
+    public ArrayList<Article> parse(InputStream inputStream) throws XmlPullParserException, IOException {
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         this.parser.setInput(inputStream, "UTF-8");
 
@@ -57,24 +58,25 @@ public class KrautreporterRssParser {
                     }
                     else if (tagName.equalsIgnoreCase("guid"))
                     {
-                        this.article.uuid = this.text;
+                        this.article.setUuid(this.text);
                     }
                     else if (tagName.equalsIgnoreCase("title"))
                     {
-                        this.article.title = this.text;
+                        this.article.setTitle(this.text);
                     }
                     else if (tagName.equalsIgnoreCase("pubDate"))
                     {
-                        this.article.date = this.parseDate(this.text);
+                        Date date = this.parseDate(this.text);
+                        this.article.setDate(date);
                     }
                     else if (tagName.equalsIgnoreCase("link"))
                     {
-                        this.article.link = this.text;
+                        this.article.setLink(this.text);
                     }
                     else if (tagName.equalsIgnoreCase("description"))
                     {
                         String content = this.parseContent(this.text);
-                        this.article.content = content;
+                        this.article.setContent(content);
                     }
                     break;
                 default:
@@ -114,7 +116,8 @@ public class KrautreporterRssParser {
 
         while (matcher.find())
         {
-            this.article.image = "https://krautreporter.de" + matcher.group(2);
+            String image = String.format("https://krautreporter.de%s", matcher.group(2));
+            this.article.setImage(image);
 
             return matcher.group(5);
         }
@@ -128,7 +131,7 @@ public class KrautreporterRssParser {
 
         while (matcher.find())
         {
-            this.article.excerpt = matcher.group(3);
+            this.article.setExcerpt(matcher.group(3));
 
             return matcher.group(4);
         }
