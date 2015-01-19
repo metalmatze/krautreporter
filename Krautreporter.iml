@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.path="$USER_HOME$/dev/android/MetalMatze/Krautreporter" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="java-gradle" name="Java-Gradle">
       <configuration>
-        <option name="BUILD_FOLDER_PATH" value="$MODULE_DIR$/build" />
+        <option name="BUILD_FOLDER_PATH" value="$USER_HOME$/dev/android/MetalMatze/Krautreporter/build" />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/build/classes/main" />
-    <output-test url="file://$MODULE_DIR$/build/classes/test" />
+    <output url="file://$USER_HOME$/dev/android/MetalMatze/Krautreporter/build/classes/main" />
+    <output-test url="file://$USER_HOME$/dev/android/MetalMatze/Krautreporter/build/classes/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/.gradle" />
+    <content url="file://$USER_HOME$/dev/android/MetalMatze/Krautreporter">
+      <excludeFolder url="file://$USER_HOME$/dev/android/MetalMatze/Krautreporter/.gradle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
