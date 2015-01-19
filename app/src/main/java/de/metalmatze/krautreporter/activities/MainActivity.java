@@ -14,6 +14,8 @@ import com.crashlytics.android.Crashlytics;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
 import de.metalmatze.krautreporter.models.Article;
@@ -24,11 +26,13 @@ import io.fabric.sdk.android.Fabric;
 public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener, Response.ErrorListener, Response.Listener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    protected RecyclerView recyclerView;
+
     protected ArticlesAdapter articlesAdapter;
     protected ArticleService articleService;
 
     private List<Article> articles;
+
+    @InjectView(R.id.recyclerView) RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
 
         articleService = new ArticleServiceActiveAndroid(this);
         articles = articleService.all();
@@ -44,7 +49,6 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, articles);
 
         recyclerView.setLayoutManager(layoutManager);

@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
@@ -43,19 +45,22 @@ public class ArticleActivity extends ActionBarActivity {
     protected Picasso picasso;
 
     private Article article;
-    private TextView articleTitle;
-    private TextView articleDate;
-    private ImageView articleImage;
-    private TextView articleExcerpt;
-    private TextView articleContent;
     private Typeface typefaceTisaSans;
     private Typeface typefaceTisaSansBold;
+    private List<Target> picassoTargets = new LinkedList<Target>();
 
-    private List picassoTargets = new LinkedList();
+    @InjectView(R.id.article_title) TextView articleTitle;
+    @InjectView(R.id.article_date) TextView articleDate;
+    @InjectView(R.id.article_image) ImageView articleImage;
+    @InjectView(R.id.article_excerpt) TextView articleExcerpt;
+    @InjectView(R.id.article_content) TextView articleContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_article);
+        ButterKnife.inject(this);
 
         this.articleService = new ArticleServiceActiveAndroid(this);
         picasso = Picasso.with(this);
@@ -63,7 +68,6 @@ public class ArticleActivity extends ActionBarActivity {
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
         this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
 
-        setContentView(R.layout.activity_article);
 
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
@@ -73,12 +77,6 @@ public class ArticleActivity extends ActionBarActivity {
         long id = getIntent().getLongExtra("id", -1);
 
         this.article = this.articleService.find(id);
-
-        articleTitle = (TextView) findViewById(R.id.article_title);
-        articleDate = (TextView) findViewById(R.id.article_date);
-        articleImage = (ImageView) findViewById(R.id.article_image);
-        articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
-        articleContent = (TextView) findViewById(R.id.article_content);
 
         setTitle(article.getTitle());
         setDate(article.getDate());

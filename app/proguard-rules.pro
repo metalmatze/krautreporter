@@ -26,3 +26,7 @@
 -keepattributes Table
 -keepclasseswithmembers class * { @com.activeandroid.annotation.Column <fields>; }
 -dontwarn com.squareup.okhttp.**
+
+-dontwarn butterknife.internal.**
+-keep class **$$ViewInjector { *; }
+-keepnames class * { @butterknife.InjectView *;}
