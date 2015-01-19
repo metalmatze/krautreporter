@@ -28,11 +28,13 @@ import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 import de.metalmatze.krautreporter.services.ArticleService;
+import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 
 public class ArticleActivity extends ActionBarActivity {
 
@@ -48,6 +50,8 @@ public class ArticleActivity extends ActionBarActivity {
     private TextView articleContent;
     private Typeface typefaceTisaSans;
     private Typeface typefaceTisaSansBold;
+
+    private List picassoTargets = new LinkedList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,26 +175,29 @@ public class ArticleActivity extends ActionBarActivity {
 
             final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource().replace("/w300_", "/w1000_");
 
-            picasso.load(imageUrl).into(new Target() {
+            Target picassoTarget = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), bitmap);
-                    contentStringBuilder.setSpan(newImageSpan, start, end, ImageSpan.ALIGN_BASELINE);
+                    contentStringBuilder.setSpan(newImageSpan, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                     contentStringBuilder.removeSpan(imageSpan);
                     articleContent.setText(contentStringBuilder);
-                    Log.d(LOG_TAG, String.format("content with new image %s", imageUrl));
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
                     Log.d(LOG_TAG, String.format("Picasso fails to load: %s", imageUrl));
+                    contentStringBuilder.removeSpan(imageSpan);
+                    articleContent.setText(contentStringBuilder);
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    Log.d(LOG_TAG, String.format("Picasso prepares to load: %s", imageUrl));
                 }
-            });
+            };
+            picassoTargets.add(picassoTarget);
+
+            picasso.load(imageUrl).into(picassoTarget);
         }
 
         QuoteSpan[] quoteSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), QuoteSpan.class);
@@ -202,7 +209,6 @@ public class ArticleActivity extends ActionBarActivity {
 
             contentStringBuilder.removeSpan(oldQuoteSpan);
             contentStringBuilder.setSpan(quoteSpan, start, end, 0);
-
         }
 
         articleContent.setText(contentStringBuilder);
