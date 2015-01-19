@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.squareup.picasso.Target;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,6 +40,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     protected Picasso picasso;
 
     private List<Article> articles;
+    private List<Target> picassoTargets;
 
     public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<Article> articles) {
         this.context = context;
@@ -45,6 +48,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         this.picasso = Picasso.with(context);
 
         this.articles = articles;
+        this.picassoTargets = new LinkedList<>();
     }
 
     @Override
@@ -71,9 +75,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         {
             viewHolder.setImageVisibility(View.INVISIBLE);
 
-            picasso.load(article.getImage()).into(new Target() {
+            Target picassoTarget = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Log.d(ArticlesAdapter.class.getSimpleName(), String.format("Picasso loaded %s", article.getImage()));
                     viewHolder.setImage(bitmap);
                 }
 
@@ -84,8 +89,12 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    Log.d(ArticlesAdapter.class.getSimpleName(), String.format("Picasso prepares %s", article.getImage()));
                 }
-            });
+            };
+
+            picasso.load(article.getImage()).into(picassoTarget);
+            picassoTargets.add(picassoTarget);
         }
         else {
             viewHolder.setImageVisibility(View.GONE);
