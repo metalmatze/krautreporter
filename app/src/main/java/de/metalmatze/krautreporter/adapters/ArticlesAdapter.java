@@ -1,12 +1,15 @@
 package de.metalmatze.krautreporter.adapters;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -33,6 +36,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         public void onItemClick(Article article);
     }
 
+    public static final String LOG_TAG = ArticlesAdapter.class.getSimpleName();
     public static final int IMAGE_FADEIN_DURATION = 300;
 
     protected Context context;
@@ -53,9 +57,23 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
     @Override
     public ArticlesAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View itemView = LayoutInflater
+        final View itemView = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.article_card, viewGroup, false);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            itemView.setOnTouchListener(new View.OnTouchListener() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d(LOG_TAG, String.format("onTouch(%f, %f)", event.getX(), event.getY()));
+//                    RippleDrawable rippleDrawable = (RippleDrawable) itemView.getBackground();
+//                    rippleDrawable.setHotspot(event.getX(), event.getY());
+                    itemView.getBackground().setHotspot(event.getX(), event.getY());
+                    return false;
+                }
+            });
+        }
 
         return ViewHolder.newInstance(context, itemView);
     }
@@ -178,6 +196,5 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         {
             this.itemView.setOnClickListener(listener);
         }
-
     }
 }
