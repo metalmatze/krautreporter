@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Krautreporter.iml" filepath="$PROJECT_DIR$/Krautreporter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/krautreporter.iml" filepath="$PROJECT_DIR$/krautreporter.iml" />
     </modules>
   </component>
 </project>
