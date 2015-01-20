@@ -33,6 +33,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         public void onItemClick(Article article);
     }
 
+    public static final String LOG_TAG = ArticlesAdapter.class.getSimpleName();
     public static final int IMAGE_FADEIN_DURATION = 300;
 
     protected Context context;
@@ -53,7 +54,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
     @Override
     public ArticlesAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View itemView = LayoutInflater
+        final View itemView = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.article_card, viewGroup, false);
 
@@ -178,6 +179,5 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         {
             this.itemView.setOnClickListener(listener);
         }
-
     }
 }
