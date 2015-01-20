@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +78,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
             Target picassoTarget = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    Log.d(ArticlesAdapter.class.getSimpleName(), String.format("Picasso loaded %s", article.getImage()));
                     viewHolder.setImage(bitmap);
                 }
 
@@ -90,7 +88,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    Log.d(ArticlesAdapter.class.getSimpleName(), String.format("Picasso prepares %s", article.getImage()));
                 }
             };
 
