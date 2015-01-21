@@ -19,6 +19,7 @@ import com.squareup.picasso.Target;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +32,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         public void onItemClick(Article article);
     }
 
+    public static final String LOG_TAG = ArticlesAdapter.class.getSimpleName();
     public static final int IMAGE_FADEIN_DURATION = 300;
 
     protected Context context;
@@ -38,6 +40,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     protected Picasso picasso;
 
     private List<Article> articles;
+    private List<Target> picassoTargets;
 
     public ArticlesAdapter(Context context, OnItemClickListener itemClickListener, List<Article> articles) {
         this.context = context;
@@ -45,11 +48,12 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         this.picasso = Picasso.with(context);
 
         this.articles = articles;
+        this.picassoTargets = new LinkedList<>();
     }
 
     @Override
     public ArticlesAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View itemView = LayoutInflater
+        final View itemView = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.article_card, viewGroup, false);
 
@@ -71,7 +75,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         {
             viewHolder.setImageVisibility(View.INVISIBLE);
 
-            picasso.load(article.getImage()).into(new Target() {
+            Target picassoTarget = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     viewHolder.setImage(bitmap);
@@ -85,7 +89,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
                 }
-            });
+            };
+
+            picasso.load(article.getImage()).into(picassoTarget);
+            picassoTargets.add(picassoTarget);
         }
         else {
             viewHolder.setImageVisibility(View.GONE);
@@ -169,6 +176,5 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         {
             this.itemView.setOnClickListener(listener);
         }
-
     }
 }

@@ -8,6 +8,7 @@
         <item name="android:windowBackground">@color/krautWindowBackground</item>
         <item name="android:textColor">@color/krautTextColor</item>
         <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:actionModeBackground">@color/krautPrimary</item>
     </style>
 
 </resources>

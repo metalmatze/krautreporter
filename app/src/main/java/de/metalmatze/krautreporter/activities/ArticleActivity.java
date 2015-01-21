@@ -3,6 +3,7 @@ package de.metalmatze.krautreporter.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,17 +23,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.metalmatze.krautreporter.R;
+import de.metalmatze.krautreporter.helpers.Checksum;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 import de.metalmatze.krautreporter.services.ArticleService;
+import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
 
 public class ArticleActivity extends ActionBarActivity {
 
@@ -41,17 +54,22 @@ public class ArticleActivity extends ActionBarActivity {
     protected Picasso picasso;
 
     private Article article;
-    private TextView articleTitle;
-    private TextView articleDate;
-    private ImageView articleImage;
-    private TextView articleExcerpt;
-    private TextView articleContent;
     private Typeface typefaceTisaSans;
     private Typeface typefaceTisaSansBold;
+    private List<Target> picassoTargets = new LinkedList<Target>();
+
+    @InjectView(R.id.article_title) TextView articleTitle;
+    @InjectView(R.id.article_date) TextView articleDate;
+    @InjectView(R.id.article_image) ImageView articleImage;
+    @InjectView(R.id.article_excerpt) TextView articleExcerpt;
+    @InjectView(R.id.article_content) TextView articleContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_article);
+        ButterKnife.inject(this);
 
         this.articleService = new ArticleServiceActiveAndroid(this);
         picasso = Picasso.with(this);
@@ -59,7 +77,6 @@ public class ArticleActivity extends ActionBarActivity {
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
         this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
 
-        setContentView(R.layout.activity_article);
 
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
@@ -69,12 +86,6 @@ public class ArticleActivity extends ActionBarActivity {
         long id = getIntent().getLongExtra("id", -1);
 
         this.article = this.articleService.find(id);
-
-        articleTitle = (TextView) findViewById(R.id.article_title);
-        articleDate = (TextView) findViewById(R.id.article_date);
-        articleImage = (ImageView) findViewById(R.id.article_image);
-        articleExcerpt = (TextView) findViewById(R.id.article_excerpt);
-        articleContent = (TextView) findViewById(R.id.article_content);
 
         setTitle(article.getTitle());
         setDate(article.getDate());
@@ -116,6 +127,54 @@ public class ArticleActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.article_image)
+    public void onImageClick(ImageView image) {
+        Drawable drawable = image.getDrawable();
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+        try {
+            File file = saveBitmapToExternalFilesDir(article.getImage(), bitmap);
+            startImageIntent(file);
+
+        } catch (IOException e) {
+            Toast.makeText(this, getString(R.string.error_open_image), Toast.LENGTH_SHORT).show();
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        }
+
+    }
+
+    private void startImageIntent(File file) {
+        Uri uri = Uri.fromFile(file);
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "image/*");
+
+        startActivity(intent);
+    }
+
+    private File saveBitmapToExternalFilesDir(String url, Bitmap bitmap) throws IOException {
+        try {
+            String fileName = Checksum.md5(url);
+
+            File file = new File(getExternalFilesDir(null), String.format("%s.jpg", fileName));
+
+            if (file.exists()) {
+                return file;
+            }
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            return file;
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException("Couldn't hash url with md5");
+        }
+    }
+
     private void setExcerpt(String excerpt) {
         this.articleExcerpt.setText(excerpt);
         this.articleExcerpt.setTypeface(typefaceTisaSansBold);
@@ -154,7 +213,7 @@ public class ArticleActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View widget) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(urlSpan.getURL()));
+                    intent.setData(Uri.parse(urlSpan.getURL().trim()));
 
                     startActivity(intent);
                 }
@@ -168,29 +227,47 @@ public class ArticleActivity extends ActionBarActivity {
         {
             final int start = contentStringBuilder.getSpanStart(imageSpan);
             final int end = contentStringBuilder.getSpanEnd(imageSpan);
-
             final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource().replace("/w300_", "/w1000_");
 
-            picasso.load(imageUrl).into(new Target() {
+            Target picassoTarget = new Target() {
                 @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), bitmap);
-                    contentStringBuilder.setSpan(newImageSpan, start, end, ImageSpan.ALIGN_BASELINE);
+                public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                    final ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), bitmap);
+
+                    ClickableSpan clickableSpan = new ClickableSpan() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                File imageFile = saveBitmapToExternalFilesDir(imageUrl, bitmap);
+                                startImageIntent(imageFile);
+                            } catch (IOException e) {
+                                Toast.makeText(getApplicationContext(), getString(R.string.error_open_image), Toast.LENGTH_SHORT).show();
+                                Crashlytics.logException(e);
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+                    contentStringBuilder.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    contentStringBuilder.setSpan(newImageSpan, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                     contentStringBuilder.removeSpan(imageSpan);
                     articleContent.setText(contentStringBuilder);
-                    Log.d(LOG_TAG, String.format("content with new image %s", imageUrl));
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
                     Log.d(LOG_TAG, String.format("Picasso fails to load: %s", imageUrl));
+                    contentStringBuilder.removeSpan(imageSpan);
+                    articleContent.setText(contentStringBuilder);
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    Log.d(LOG_TAG, String.format("Picasso prepares to load: %s", imageUrl));
                 }
-            });
+            };
+            picassoTargets.add(picassoTarget);
+
+            picasso.load(imageUrl).into(picassoTarget);
         }
 
         QuoteSpan[] quoteSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), QuoteSpan.class);
@@ -202,7 +279,6 @@ public class ArticleActivity extends ActionBarActivity {
 
             contentStringBuilder.removeSpan(oldQuoteSpan);
             contentStringBuilder.setSpan(quoteSpan, start, end, 0);
-
         }
 
         articleContent.setText(contentStringBuilder);
