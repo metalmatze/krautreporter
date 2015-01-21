@@ -23,14 +23,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.metalmatze.krautreporter.R;
+import de.metalmatze.krautreporter.helpers.Checksum;
 import de.metalmatze.krautreporter.helpers.ClickableImageSpan;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
@@ -132,33 +134,10 @@ public class ArticleActivity extends ActionBarActivity {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(article.getImage().getBytes());
-            byte[] digest = messageDigest.digest();
-
-            StringBuffer stringBuffer = new StringBuffer();
-            for (byte b : digest) {
-                stringBuffer.append(String.format("%02x", b & 0xff));
-            }
-
-            String md5 = stringBuffer.toString();
-
-            Log.d(LOG_TAG, md5);
-
-            File file = new File(getExternalFilesDir(null), md5);
-
-            try {
-                FileOutputStream outputStream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String md5 = Checksum.md5(article.getImage());
+            File file = saveBitmapToExternalFilesDir(String.format("%s.jpg", md5), bitmap);
 
             Uri uri = Uri.fromFile(file);
-
-            Log.d(LOG_TAG, uri.toString());
 
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
@@ -166,10 +145,27 @@ public class ArticleActivity extends ActionBarActivity {
 
             startActivity(intent);
 
-        } catch (NoSuchAlgorithmException e) {
+        } catch (IOException | NoSuchAlgorithmException e) {
+            Toast.makeText(this, getString(R.string.error_open_image), Toast.LENGTH_SHORT).show();
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
 
+    }
+
+    private File saveBitmapToExternalFilesDir(String name, Bitmap bitmap) throws IOException {
+        File file = new File(getExternalFilesDir(null), name);
+
+        if (file.exists()) {
+            return file;
+        }
+
+        FileOutputStream outputStream = new FileOutputStream(file);
+        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
+        outputStream.flush();
+        outputStream.close();
+
+        return file;
     }
 
     private void setExcerpt(String excerpt) {
