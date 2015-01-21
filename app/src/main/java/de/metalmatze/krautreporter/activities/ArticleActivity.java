@@ -3,6 +3,7 @@ package de.metalmatze.krautreporter.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,11 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -33,7 +39,9 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.metalmatze.krautreporter.R;
+import de.metalmatze.krautreporter.helpers.ClickableImageSpan;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
 import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
@@ -118,6 +126,52 @@ public class ArticleActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.article_image)
+    public void onImageClick(ImageView image) {
+        Drawable drawable = image.getDrawable();
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.update(article.getImage().getBytes());
+            byte[] digest = messageDigest.digest();
+
+            StringBuffer stringBuffer = new StringBuffer();
+            for (byte b : digest) {
+                stringBuffer.append(String.format("%02x", b & 0xff));
+            }
+
+            String md5 = stringBuffer.toString();
+
+            Log.d(LOG_TAG, md5);
+
+            File file = new File(getExternalFilesDir(null), md5);
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Uri uri = Uri.fromFile(file);
+
+            Log.d(LOG_TAG, uri.toString());
+
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, "image/*");
+
+            startActivity(intent);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void setExcerpt(String excerpt) {
         this.articleExcerpt.setText(excerpt);
         this.articleExcerpt.setTypeface(typefaceTisaSansBold);
@@ -176,7 +230,8 @@ public class ArticleActivity extends ActionBarActivity {
             Target picassoTarget = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), bitmap);
+                    ImageSpan newImageSpan = new ClickableImageSpan(getApplicationContext(), bitmap);
+
                     contentStringBuilder.setSpan(newImageSpan, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                     contentStringBuilder.removeSpan(imageSpan);
                     articleContent.setText(contentStringBuilder);
