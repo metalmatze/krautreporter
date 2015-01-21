@@ -43,7 +43,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.helpers.Checksum;
-import de.metalmatze.krautreporter.helpers.ClickableImageSpan;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
 import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
@@ -134,18 +133,10 @@ public class ArticleActivity extends ActionBarActivity {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
         try {
-            String md5 = Checksum.md5(article.getImage());
-            File file = saveBitmapToExternalFilesDir(String.format("%s.jpg", md5), bitmap);
+            File file = saveBitmapToExternalFilesDir(article.getImage(), bitmap);
+            startImageIntent(file);
 
-            Uri uri = Uri.fromFile(file);
-
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, "image/*");
-
-            startActivity(intent);
-
-        } catch (IOException | NoSuchAlgorithmException e) {
+        } catch (IOException e) {
             Toast.makeText(this, getString(R.string.error_open_image), Toast.LENGTH_SHORT).show();
             Crashlytics.logException(e);
             e.printStackTrace();
@@ -153,19 +144,35 @@ public class ArticleActivity extends ActionBarActivity {
 
     }
 
-    private File saveBitmapToExternalFilesDir(String name, Bitmap bitmap) throws IOException {
-        File file = new File(getExternalFilesDir(null), name);
+    private void startImageIntent(File file) {
+        Uri uri = Uri.fromFile(file);
 
-        if (file.exists()) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "image/*");
+
+        startActivity(intent);
+    }
+
+    private File saveBitmapToExternalFilesDir(String url, Bitmap bitmap) throws IOException {
+        try {
+            String fileName = Checksum.md5(url);
+
+            File file = new File(getExternalFilesDir(null), String.format("%s.jpg", fileName));
+
+            if (file.exists()) {
+                return file;
+            }
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
             return file;
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException("Couldn't hash url with md5");
         }
-
-        FileOutputStream outputStream = new FileOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
-        outputStream.flush();
-        outputStream.close();
-
-        return file;
     }
 
     private void setExcerpt(String excerpt) {
@@ -206,7 +213,7 @@ public class ArticleActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View widget) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(urlSpan.getURL()));
+                    intent.setData(Uri.parse(urlSpan.getURL().trim()));
 
                     startActivity(intent);
                 }
@@ -220,14 +227,28 @@ public class ArticleActivity extends ActionBarActivity {
         {
             final int start = contentStringBuilder.getSpanStart(imageSpan);
             final int end = contentStringBuilder.getSpanEnd(imageSpan);
-
             final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource().replace("/w300_", "/w1000_");
 
             Target picassoTarget = new Target() {
                 @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    ImageSpan newImageSpan = new ClickableImageSpan(getApplicationContext(), bitmap);
+                public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                    final ImageSpan newImageSpan = new ImageSpan(getApplicationContext(), bitmap);
 
+                    ClickableSpan clickableSpan = new ClickableSpan() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                File imageFile = saveBitmapToExternalFilesDir(imageUrl, bitmap);
+                                startImageIntent(imageFile);
+                            } catch (IOException e) {
+                                Toast.makeText(getApplicationContext(), getString(R.string.error_open_image), Toast.LENGTH_SHORT).show();
+                                Crashlytics.logException(e);
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+                    contentStringBuilder.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     contentStringBuilder.setSpan(newImageSpan, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                     contentStringBuilder.removeSpan(imageSpan);
                     articleContent.setText(contentStringBuilder);
