@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Title"
+        android:text="Headline"
         android:id="@+id/article_title"
         android:textStyle="bold"
         android:gravity="center"
@@ -60,7 +60,7 @@
         android:textIsSelectable="true"
         android:textColor="@color/body"
         android:layout_below="@+id/article_image"
-        android:textSize="@dimen/abc_text_size_medium_material"
+        android:textSize="@dimen/abc_text_size_large_material"
         android:paddingLeft="@dimen/article_margin_horizontal"
         android:paddingRight="@dimen/article_margin_horizontal"
         android:paddingTop="@dimen/activity_margin_vertical"
