@@ -5,32 +5,25 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.crashlytics.android.Crashlytics;
-
-import java.util.Collections;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
+import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.services.ArticleService;
-import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
+import de.metalmatze.krautreporter.models.Author;
 import io.fabric.sdk.android.Fabric;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
-public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener, Response.ErrorListener, Response.Listener {
+public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    protected ArticlesAdapter articlesAdapter;
-    protected ArticleService articleService;
-
-    private List<Article> articles;
 
     @InjectView(R.id.recyclerView) RecyclerView recyclerView;
 
@@ -42,40 +35,31 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
 
-        articleService = new ArticleServiceActiveAndroid(this);
-        articles = articleService.all();
-        articleService.fetchImages(articles);
+        final Realm realm = Realm.getInstance(this);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        RealmResults<Article> articles = realm.where(Article.class).findAll();
+        articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, articles);
+        final ArticlesAdapter articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, articles);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(articlesAdapter);
 
-        articleService.update(this, this);
-    }
+        Api.with(realm).updateAuthors();
+        Api.with(realm).updateArticles();
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        Log.d(LOG_TAG + " articles: ", String.valueOf(realm.where(Article.class).count()));
+        Log.d(LOG_TAG + " authors: ", String.valueOf(realm.where(Author.class).count()));
 
-        refreshArticles(articleService.all());
-    }
-
-    public void refreshArticles(List<Article> articles) {
-        articles.removeAll(this.articles);
-
-        Collections.reverse(articles);
-
-        articleService.fetchImages(articles);
-
-        for (Article article : articles)
-        {
-            this.articles.add(0, article);
-            articlesAdapter.notifyItemInserted(0);
-        }
+        realm.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                articlesAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -85,17 +69,4 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
 
         startActivity(intent);
     }
-
-    @Override
-    public void onResponse(Object response) {
-        List<Article> articles = articleService.save((List<Article>) response);
-
-        refreshArticles(articles);
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, getString(R.string.error_response_rss), Toast.LENGTH_SHORT).show();
-    }
-
 }
