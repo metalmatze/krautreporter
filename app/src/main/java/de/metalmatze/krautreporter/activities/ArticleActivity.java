@@ -33,8 +33,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,13 +42,11 @@ import butterknife.OnClick;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.helpers.Checksum;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.services.ArticleService;
-import de.metalmatze.krautreporter.services.ArticleServiceActiveAndroid;
+import io.realm.Realm;
 
 public class ArticleActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = ArticleActivity.class.getSimpleName();
-    protected ArticleService articleService;
     protected Picasso picasso;
 
     private Article article;
@@ -58,7 +54,7 @@ public class ArticleActivity extends ActionBarActivity {
     private Typeface typefaceTisaSansBold;
     private List<Target> picassoTargets = new LinkedList<Target>();
 
-    @InjectView(R.id.article_title) TextView articleTitle;
+    @InjectView(R.id.article_title) TextView articleHeadline;
     @InjectView(R.id.article_date) TextView articleDate;
     @InjectView(R.id.article_image) ImageView articleImage;
     @InjectView(R.id.article_excerpt) TextView articleExcerpt;
@@ -71,23 +67,24 @@ public class ArticleActivity extends ActionBarActivity {
         setContentView(R.layout.activity_article);
         ButterKnife.inject(this);
 
-        this.articleService = new ArticleServiceActiveAndroid(this);
         picasso = Picasso.with(this);
 
         this.typefaceTisaSans = Typeface.createFromAsset(getAssets(), "fonts/TisaSans.otf");
         this.typefaceTisaSansBold = Typeface.createFromAsset(getAssets(), "fonts/TisaSans-Bold.otf");
 
+        int id = getIntent().getIntExtra("id", -1);
+
+        Realm realm = Realm.getInstance(getApplicationContext());
+
+        this.article = realm.where(Article.class).equalTo("id", id).findFirst();
 
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle(article.getTitle());
         }
 
-        long id = getIntent().getLongExtra("id", -1);
-
-        this.article = this.articleService.find(id);
-
-        setTitle(article.getTitle());
+        setHeadline(article.getHeadline());
         setDate(article.getDate());
         setImage(article.getImage());
         setExcerpt(article.getExcerpt());
@@ -110,7 +107,7 @@ public class ArticleActivity extends ActionBarActivity {
         {
             Intent intent = new Intent(Intent.ACTION_VIEW);
 
-            intent.setData(Uri.parse(this.article.getLink()));
+            intent.setData(Uri.parse(getString(R.string.url_krautreporter) + this.article.getUrl()));
             startActivity(intent);
         }
 
@@ -119,7 +116,7 @@ public class ArticleActivity extends ActionBarActivity {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());
-            intent.putExtra(Intent.EXTRA_TEXT, this.article.getLink());
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.url_krautreporter) + article.getUrl());
 
             startActivity(Intent.createChooser(intent, getString(R.string.share_article)));
         }
@@ -180,21 +177,20 @@ public class ArticleActivity extends ActionBarActivity {
         this.articleExcerpt.setTypeface(typefaceTisaSansBold);
     }
 
-    private void setTitle(String title) {
-        getSupportActionBar().setTitle(title);
-        this.articleTitle.setText(title);
-        this.articleTitle.setTypeface(typefaceTisaSansBold);
+    private void setHeadline(String headline) {
+        this.articleHeadline.setText(headline);
+        this.articleHeadline.setTypeface(typefaceTisaSansBold);
     }
 
-    private void setDate(Date date) {
-        String dateFormated = new SimpleDateFormat("dd.MM.yyyy").format(date.getTime());
-        this.articleDate.setText(dateFormated);
+    private void setDate(String date) {
+//        String dateFormated = new SimpleDateFormat("dd.MM.yyyy").format(date.getTime());
+        this.articleDate.setText(date);
         this.articleDate.setTypeface(typefaceTisaSans);
     }
 
     private void setImage(String image) {
         if (image != null) {
-            picasso.load(image).into(articleImage);
+            picasso.load(getString(R.string.url_krautreporter) + image).into(articleImage);
             articleImage.setVisibility(View.VISIBLE);
         }
     }
@@ -227,7 +223,7 @@ public class ArticleActivity extends ActionBarActivity {
         {
             final int start = contentStringBuilder.getSpanStart(imageSpan);
             final int end = contentStringBuilder.getSpanEnd(imageSpan);
-            final String imageUrl = getResources().getString(R.string.url_base) + imageSpan.getSource().replace("/w300_", "/w1000_");
+            final String imageUrl = getResources().getString(R.string.url_krautreporter) + imageSpan.getSource().replace("/w300_", "/w1000_");
 
             Target picassoTarget = new Target() {
                 @Override
