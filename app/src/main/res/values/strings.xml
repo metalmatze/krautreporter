@@ -5,7 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="ipsum" translatable="false">Cookie lollipop liquorice applicake lollipop brownie pudding. Donut marshmallow dragée chocolate cake. Biscuit biscuit brownie pastry. Unerdwear.com soufflé danish soufflé tootsie roll apple pie. Bonbon soufflé chocolate cake topping cotton candy powder biscuit wafer. Croissant brownie cookie. Halvah croissant chocolate cake lemon drops cupcake.</string>
     <string name="action_open_in_browser">Open in Browser</string>
-    <string name="url_base" translatable="false">https://krautreporter.de</string>
+    <string name="url_krautreporter" translatable="false">https://krautreporter.de</string>
+    <string name="url_api" translatable="false">http://krautreporter.metalmatze.de</string>
     <string name="share">Share</string>
     <string name="share_article">Share article</string>
     <string name="error_response_rss">Unable to update articles.</string>
