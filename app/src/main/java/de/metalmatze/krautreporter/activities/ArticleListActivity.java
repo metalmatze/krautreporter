@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.widget.Toast;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.api.Api;
@@ -37,8 +36,6 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
 
         Api.with(realm).updateAuthors();
         Api.with(realm).updateArticles();
-
-        Toast.makeText(getApplicationContext(), "Fetched new authors & articles", Toast.LENGTH_SHORT).show();
     }
 
     @Override
