@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
 import io.realm.Realm;
@@ -23,6 +25,11 @@ public class ArticleDetailFragment extends Fragment {
 
     private Article article;
     private ActionBarTitle actionBarTitle;
+
+    @InjectView(R.id.article_title) TextView articleTitle;
+    @InjectView(R.id.article_date) TextView articleDate;
+    @InjectView(R.id.article_excerpt) TextView articleExcerpt;
+    @InjectView(R.id.article_content) TextView articleContent;
 
     public ArticleDetailFragment() {
     }
@@ -51,7 +58,7 @@ public class ArticleDetailFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-         actionBarTitle = (ActionBarTitle) activity;
+        actionBarTitle = (ActionBarTitle) activity;
     }
 
     @Override
@@ -59,14 +66,11 @@ public class ArticleDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_article, container, false);
 
+        ButterKnife.inject(this, rootView);
+
         if (article != null) {
 
             actionBarTitle.setActionBarTitle(article.getTitle());
-
-            TextView articleTitle = (TextView) rootView.findViewById(R.id.article_title);
-            TextView articleDate = (TextView) rootView.findViewById(R.id.article_date);
-            TextView articleExcerpt = (TextView) rootView.findViewById(R.id.article_excerpt);
-            TextView articleContent = (TextView) rootView.findViewById(R.id.article_content);
 
             articleTitle.setText(article.getHeadline());
             articleDate.setText(article.getDate());
