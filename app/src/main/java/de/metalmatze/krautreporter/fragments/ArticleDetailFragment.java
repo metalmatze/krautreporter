@@ -1,11 +1,14 @@
 package de.metalmatze.krautreporter.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -93,5 +96,27 @@ public class ArticleDetailFragment extends Fragment {
         inflater.inflate(R.menu.menu_article, menu);
     }
 
-    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.action_browser) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(getString(R.string.url_krautreporter) + article.getUrl()));
+
+            startActivity(intent);
+        }
+
+        if (itemId == R.id.action_share) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.url_krautreporter) + article.getUrl());
+
+            startActivity(Intent.createChooser(intent, getString(R.string.share_article)));
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
