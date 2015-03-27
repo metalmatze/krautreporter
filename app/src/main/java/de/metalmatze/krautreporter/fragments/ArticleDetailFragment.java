@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -40,7 +42,7 @@ public class ArticleDetailFragment extends Fragment {
 
         Realm realm = Realm.getInstance(getActivity().getApplicationContext());
 
-        if (getArguments().containsKey(ARTICLE_ID)) {
+        if (getArguments().containsKey(ARTICLE_ID) && getArguments().getInt(ARTICLE_ID) >= 0) {
             article = realm
                         .where(Article.class)
                         .equalTo("id", getArguments().getInt(ARTICLE_ID))
@@ -50,7 +52,9 @@ public class ArticleDetailFragment extends Fragment {
             RealmResults<Article> articles = realm.where(Article.class).findAll();
             articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
 
-            article = articles.first();
+            if(articles.size() > 0) {
+                article = articles.first();
+            }
         }
     }
 
@@ -68,6 +72,8 @@ public class ArticleDetailFragment extends Fragment {
 
         ButterKnife.inject(this, rootView);
 
+        setHasOptionsMenu(true);
+
         if (article != null) {
 
             actionBarTitle.setActionBarTitle(article.getTitle());
@@ -80,4 +86,12 @@ public class ArticleDetailFragment extends Fragment {
 
         return rootView;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_article, menu);
+    }
+
+    
 }
