@@ -12,7 +12,7 @@ import com.crashlytics.android.Crashlytics;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.adapters.ArticlesAdapter;
+import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Author;
@@ -21,7 +21,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class MainActivity extends ActionBarActivity implements ArticlesAdapter.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements ArticleAdapter.OnItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -43,10 +43,10 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        final ArticlesAdapter articlesAdapter = new ArticlesAdapter(getApplicationContext(), this, articles);
+        final ArticleAdapter articleAdapter = new ArticleAdapter(getApplicationContext(), articles, this);
 
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(articlesAdapter);
+        recyclerView.setAdapter(articleAdapter);
 
         Api.with(realm).updateAuthors();
         Api.with(realm).updateArticles();
@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity implements ArticlesAdapter.O
         realm.addChangeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                articlesAdapter.notifyDataSetChanged();
+                articleAdapter.notifyDataSetChanged();
             }
         });
     }
