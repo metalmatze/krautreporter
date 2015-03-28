@@ -2,9 +2,17 @@ package de.metalmatze.krautreporter.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.QuoteSpan;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
+import de.metalmatze.krautreporter.models.Author;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -29,9 +38,11 @@ public class ArticleDetailFragment extends Fragment {
     public static final String ARTICLE_ID = "article_id";
 
     private Article article;
+    private Author author;
     private ActionBarTitle actionBarTitle;
 
-    @InjectView(R.id.article_title) TextView articleTitle;
+    @InjectView(R.id.author_name) TextView articleAuthorName;
+    @InjectView(R.id.article_headline) TextView articleHeadline;
     @InjectView(R.id.article_date) TextView articleDate;
     @InjectView(R.id.article_excerpt) TextView articleExcerpt;
     @InjectView(R.id.article_content) TextView articleContent;
@@ -59,6 +70,8 @@ public class ArticleDetailFragment extends Fragment {
                 article = articles.first();
             }
         }
+
+        author = realm.where(Author.class).equalTo("id", article.getAuthor()).findFirst();
     }
 
     @Override
@@ -71,20 +84,30 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_article, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
         ButterKnife.inject(this, rootView);
 
         setHasOptionsMenu(true);
 
         if (article != null) {
+            Typeface typefaceTisaSans = Typeface.createFromAsset(getActivity().getAssets(), "fonts/TisaSans.otf");
+            Typeface typefaceTisaSansBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/TisaSans-Bold.otf");
+
+            articleAuthorName.setTypeface(typefaceTisaSans);
+            articleHeadline.setTypeface(typefaceTisaSansBold);
+            articleDate.setTypeface(typefaceTisaSans);
+            articleExcerpt.setTypeface(typefaceTisaSansBold);
+            articleContent.setTypeface(typefaceTisaSans);
 
             actionBarTitle.setActionBarTitle(article.getTitle());
 
-            articleTitle.setText(article.getHeadline());
-            articleDate.setText(article.getDate());
-            articleExcerpt.setText(article.getExcerpt());
-            articleContent.setText(article.getContent());
+            setHeadline(article.getHeadline());
+            setDate(article.getDate());
+            setExcerpt(article.getExcerpt());
+            setContent(article.getContent());
+
+            setArticleAuthorName(author.getName());
         }
 
         return rootView;
@@ -119,4 +142,60 @@ public class ArticleDetailFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void setHeadline(String headline) {
+        articleHeadline.setText(headline);
+    }
+
+    private void setDate(String date) {
+        articleDate.setText(date);
+    }
+
+    private void setExcerpt(String excerpt) {
+        articleExcerpt.setText(excerpt);
+    }
+
+    private void setContent(final String content) {
+        Spanned contentFromHtml = Html.fromHtml(content);
+        final SpannableStringBuilder contentStringBuilder = new SpannableStringBuilder(contentFromHtml);
+
+        URLSpan[] urlSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), URLSpan.class);
+        for (final URLSpan urlSpan : urlSpans)
+        {
+            int start = contentStringBuilder.getSpanStart(urlSpan);
+            int end = contentStringBuilder.getSpanEnd(urlSpan);
+
+            contentStringBuilder.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(urlSpan.getURL().trim()));
+
+                    startActivity(intent);
+                }
+            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            contentStringBuilder.removeSpan(urlSpan);
+        }
+
+        QuoteSpan[] quoteSpans = contentStringBuilder.getSpans(0, contentStringBuilder.length(), QuoteSpan.class);
+        for (QuoteSpan oldQuoteSpan : quoteSpans) {
+            int start = contentStringBuilder.getSpanStart(oldQuoteSpan);
+            int end = contentStringBuilder.getSpanEnd(oldQuoteSpan);
+
+            QuoteSpan quoteSpan = new QuoteSpan(0xff000000);
+
+            contentStringBuilder.removeSpan(oldQuoteSpan);
+            contentStringBuilder.setSpan(quoteSpan, start, end, 0);
+        }
+
+        articleContent.setText(contentStringBuilder);
+        articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
+        articleContent.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void setArticleAuthorName(String name) {
+        articleAuthorName.setText(name);
+    }
+
 }
