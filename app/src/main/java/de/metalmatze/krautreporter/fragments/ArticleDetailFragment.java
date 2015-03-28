@@ -1,6 +1,7 @@
 package de.metalmatze.krautreporter.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -19,7 +20,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -37,13 +41,17 @@ public class ArticleDetailFragment extends Fragment {
 
     public static final String ARTICLE_ID = "article_id";
 
+    private ActionBarTitle actionBarTitle;
+    private Picasso picasso;
+
     private Article article;
     private Author author;
-    private ActionBarTitle actionBarTitle;
 
+    @InjectView(R.id.author_image) ImageView articleAuthorImage;
     @InjectView(R.id.author_name) TextView articleAuthorName;
     @InjectView(R.id.article_headline) TextView articleHeadline;
     @InjectView(R.id.article_date) TextView articleDate;
+    @InjectView(R.id.article_image) ImageView articleImage;
     @InjectView(R.id.article_excerpt) TextView articleExcerpt;
     @InjectView(R.id.article_content) TextView articleContent;
 
@@ -54,7 +62,10 @@ public class ArticleDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Realm realm = Realm.getInstance(getActivity().getApplicationContext());
+        Context context = getActivity().getApplicationContext();
+
+        Realm realm = Realm.getInstance(context);
+        picasso = Picasso.with(context);
 
         if (getArguments().containsKey(ARTICLE_ID) && getArguments().getInt(ARTICLE_ID) >= 0) {
             article = realm
@@ -104,10 +115,12 @@ public class ArticleDetailFragment extends Fragment {
 
             setHeadline(article.getHeadline());
             setDate(article.getDate());
+            setImage(article.getImage());
             setExcerpt(article.getExcerpt());
             setContent(article.getContent());
 
             setArticleAuthorName(author.getName());
+            setArticleAuthorImage(author.getImage());
         }
 
         return rootView;
@@ -149,6 +162,16 @@ public class ArticleDetailFragment extends Fragment {
 
     private void setDate(String date) {
         articleDate.setText(date);
+    }
+
+    private void setImage(String url) {
+        if (url != null && ! url.equals("")) {
+            articleImage.setVisibility(View.VISIBLE);
+            picasso.load(getString(R.string.url_krautreporter) + url).into(articleImage);
+        } else {
+            articleImage.setVisibility(View.GONE);
+        }
+
     }
 
     private void setExcerpt(String excerpt) {
@@ -196,6 +219,10 @@ public class ArticleDetailFragment extends Fragment {
 
     private void setArticleAuthorName(String name) {
         articleAuthorName.setText(name);
+    }
+
+    private void setArticleAuthorImage(String url) {
+        picasso.load(getString(R.string.url_krautreporter) + url).into(articleAuthorImage);
     }
 
 }
