@@ -39,6 +39,7 @@ public class Api {
                             return false;
                         }
                     })
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                     .create();
 
             RestAdapter restAdapter = new RestAdapter.Builder()
@@ -63,7 +64,7 @@ public class Api {
     public void updateArticles() {
         Api.request().articles(new Callback<JsonArray<Article>>() {
             @Override
-            public void success(JsonArray<de.metalmatze.krautreporter.models.Article> articles, Response response) {
+            public void success(JsonArray<Article> articles, Response response) {
                 realm.beginTransaction();
                 realm.copyToRealmOrUpdate(articles.data);
                 realm.commitTransaction();
