@@ -1,6 +1,12 @@
 package de.metalmatze.krautreporter.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
+
+import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
@@ -15,24 +21,29 @@ public class Article extends RealmObject {
 
     private String headline;
 
-    private String date;
+    private Date date;
 
     private boolean morgenpost;
 
     @Index
     private String url;
 
-    private String image;
-
     private String excerpt;
 
     private String content;
 
-    private int author;
+    private Date createdAt;
 
-    private String created_at;
+    private Date updatedAt;
 
-    private String updated_at;
+    @SerializedName("images.data")
+    private RealmList<Image> images;
+
+    private Author author;
+
+    @Ignore
+    @SerializedName("author_id")
+    private int authorId;
 
     public int getId() {
         return id;
@@ -66,11 +77,11 @@ public class Article extends RealmObject {
         this.headline = headline;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -90,14 +101,6 @@ public class Article extends RealmObject {
         this.url = url;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getExcerpt() {
         return excerpt;
     }
@@ -114,27 +117,43 @@ public class Article extends RealmObject {
         this.content = content;
     }
 
-    public int getAuthor() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public RealmList<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(RealmList<Image> images) {
+        this.images = images;
+    }
+
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(int author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
-    }
-
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 }

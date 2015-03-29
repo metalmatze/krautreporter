@@ -1,8 +1,9 @@
 package de.metalmatze.krautreporter.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 public class Author extends RealmObject {
@@ -12,20 +13,22 @@ public class Author extends RealmObject {
 
     private String name;
 
-    @Index
-    private String url;
+    private String title;
 
-    private String image;
+    private String url;
 
     private String biography;
 
     private String socialmedia;
 
-    private RealmList<Article> articles;
-
     private String created_at;
 
     private String updated_at;
+
+    @SerializedName("images.data")
+    private RealmList<Image> images;
+
+    private RealmList<Article> articles;
 
     public int getId() {
         return id;
@@ -43,20 +46,20 @@ public class Author extends RealmObject {
         this.name = name;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getBiography() {
@@ -75,14 +78,6 @@ public class Author extends RealmObject {
         this.socialmedia = socialmedia;
     }
 
-    public RealmList<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(RealmList<Article> articles) {
-        this.articles = articles;
-    }
-
     public String getCreated_at() {
         return created_at;
     }
@@ -97,5 +92,21 @@ public class Author extends RealmObject {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public RealmList<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(RealmList<Image> images) {
+        this.images = images;
+    }
+
+    public RealmList<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(RealmList<Article> articles) {
+        this.articles = articles;
     }
 }
