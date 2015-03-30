@@ -1,9 +1,11 @@
 package de.metalmatze.krautreporter.models;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
+import de.metalmatze.krautreporter.api.JsonArray;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
@@ -13,37 +15,53 @@ import io.realm.annotations.PrimaryKey;
 public class Article extends RealmObject {
 
     @PrimaryKey
+    @Expose
     private int id;
 
+    @Expose
     private int order;
 
+    @Expose
     private String title;
 
+    @Expose
     private String headline;
 
+    @Expose
     private Date date;
 
+    @Expose
     private boolean morgenpost;
 
     @Index
+    @Expose
     private String url;
 
+    @Expose
     private String excerpt;
 
+    @Expose
     private String content;
 
+    @Expose
     private Date createdAt;
 
+    @Expose
     private Date updatedAt;
 
-    @SerializedName("images.data")
     private RealmList<Image> images;
 
     private Author author;
 
     @Ignore
+    @Expose
     @SerializedName("author_id")
-    private int authorId;
+    private int serializedAuthor;
+
+    @Ignore
+    @Expose
+    @SerializedName("images")
+    private JsonArray<Image> serializedImages;
 
     public int getId() {
         return id;
@@ -149,11 +167,19 @@ public class Article extends RealmObject {
         this.author = author;
     }
 
-    public int getAuthorId() {
-        return authorId;
+    public int getSerializedAuthor() {
+        return serializedAuthor;
     }
 
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public void setSerializedAuthor(int serializedAuthor) {
+        this.serializedAuthor = serializedAuthor;
+    }
+
+    public JsonArray<Image> getSerializedImages() {
+        return serializedImages;
+    }
+
+    public void setSerializedImages(JsonArray<Image> serializedImages) {
+        this.serializedImages = serializedImages;
     }
 }

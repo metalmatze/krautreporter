@@ -1,13 +1,18 @@
 package de.metalmatze.krautreporter.models;
 
+import com.google.gson.annotations.Expose;
+
 import io.realm.RealmObject;
 
 public class Image extends RealmObject {
 
+    @Expose
     private int id;
 
+    @Expose
     private int width;
 
+    @Expose
     private String src;
 
     public int getId() {

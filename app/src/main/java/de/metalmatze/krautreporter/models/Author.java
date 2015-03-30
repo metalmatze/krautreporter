@@ -1,6 +1,6 @@
 package de.metalmatze.krautreporter.models;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -9,23 +9,30 @@ import io.realm.annotations.PrimaryKey;
 public class Author extends RealmObject {
 
     @PrimaryKey
+    @Expose
     private int id;
 
+    @Expose
     private String name;
 
+    @Expose
     private String title;
 
+    @Expose
     private String url;
 
+    @Expose
     private String biography;
 
+    @Expose
     private String socialmedia;
 
+    @Expose
     private String created_at;
 
+    @Expose
     private String updated_at;
 
-    @SerializedName("images.data")
     private RealmList<Image> images;
 
     private RealmList<Article> articles;
