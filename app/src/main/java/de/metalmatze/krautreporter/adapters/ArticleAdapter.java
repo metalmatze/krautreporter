@@ -11,14 +11,11 @@ import android.widget.TextView;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.models.Author;
-import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
 
     protected final Context context;
-    private Realm realm;
 
     public interface OnItemClickListener {
         public void onItemClick(Article article);
@@ -38,8 +35,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.context = context;
         this.articles = articles;
         this.onItemClickListener = onItemClickListener;
-
-        realm = Realm.getInstance(context);
     }
 
     @Override
@@ -53,12 +48,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
         final Article article = this.articles.get(position);
 
-        Author author = realm.where(Author.class)
-                            .equalTo("id", article.getAuthor())
-                            .findFirst();
-
         viewHolder.setTitle(article.getTitle());
-        viewHolder.setAuthor(author.getName());
+        viewHolder.setAuthor(article.getAuthor().getName());
 
         viewHolder.setOnClickListener(new View.OnClickListener() {
 
