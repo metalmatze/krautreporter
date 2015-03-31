@@ -1,38 +1,67 @@
 package de.metalmatze.krautreporter.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
+
+import de.metalmatze.krautreporter.api.JsonArray;
+import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 public class Article extends RealmObject {
 
     @PrimaryKey
+    @Expose
     private int id;
 
+    @Expose
     private int order;
 
+    @Expose
     private String title;
 
+    @Expose
     private String headline;
 
-    private String date;
+    @Expose
+    private Date date;
 
+    @Expose
     private boolean morgenpost;
 
     @Index
+    @Expose
     private String url;
 
-    private String image;
-
+    @Expose
     private String excerpt;
 
+    @Expose
     private String content;
 
-    private int author;
+    @Expose
+    private Date createdAt;
 
-    private String created_at;
+    @Expose
+    private Date updatedAt;
 
-    private String updated_at;
+    private RealmList<Image> images;
+
+    private Author author;
+
+    @Ignore
+    @Expose
+    @SerializedName("author_id")
+    private int serializedAuthor;
+
+    @Ignore
+    @Expose
+    @SerializedName("images")
+    private JsonArray<Image> serializedImages;
 
     public int getId() {
         return id;
@@ -66,11 +95,11 @@ public class Article extends RealmObject {
         this.headline = headline;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -90,14 +119,6 @@ public class Article extends RealmObject {
         this.url = url;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getExcerpt() {
         return excerpt;
     }
@@ -114,27 +135,51 @@ public class Article extends RealmObject {
         this.content = content;
     }
 
-    public int getAuthor() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public RealmList<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(RealmList<Image> images) {
+        this.images = images;
+    }
+
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(int author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public int getSerializedAuthor() {
+        return serializedAuthor;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public void setSerializedAuthor(int serializedAuthor) {
+        this.serializedAuthor = serializedAuthor;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
+    public JsonArray<Image> getSerializedImages() {
+        return serializedImages;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setSerializedImages(JsonArray<Image> serializedImages) {
+        this.serializedImages = serializedImages;
     }
 }
