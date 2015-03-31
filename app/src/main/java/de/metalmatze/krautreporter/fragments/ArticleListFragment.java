@@ -70,8 +70,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
             }
         });
 
-        Api.with(realm).updateAuthors(null);
-        Api.with(realm).updateArticles(null);
+        Api.with(getActivity()).updateAuthors(null);
+        Api.with(getActivity()).updateArticles(null);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
-        Api.with(Realm.getInstance(getActivity())).updateArticles(new Api.ApiCallback() {
+        Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
             @Override
             public void finished() {
                 if (swipeRefreshLayout.isRefreshing()) {

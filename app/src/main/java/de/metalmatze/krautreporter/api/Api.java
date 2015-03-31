@@ -1,5 +1,6 @@
 package de.metalmatze.krautreporter.api;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.google.gson.ExclusionStrategy;
@@ -9,6 +10,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
+import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Author;
 import de.metalmatze.krautreporter.models.Image;
@@ -26,14 +28,14 @@ public class Api {
         public void finished();
     }
 
-    public static final String URL = "http://krautreporter.metalmatze.de";
     public static final String LOG_TAG = Api.class.getSimpleName();
 
+    protected final Context context;
     protected Realm realm;
 
     private static ApiInterface singleton;
 
-    public static ApiInterface request() {
+    public ApiInterface request() {
 
         if (singleton == null) {
 
@@ -54,7 +56,7 @@ public class Api {
                     .create();
 
             RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint(URL)
+                    .setEndpoint(context.getString(R.string.url_api))
                     .setConverter(new GsonConverter(gson))
                     .build();
 
@@ -64,16 +66,17 @@ public class Api {
         return singleton;
     }
 
-    public static Api with(Realm realm) {
-        return new Api(realm);
+    public static Api with(Context context) {
+        return new Api(context);
     }
 
-    public Api(Realm realm) {
-        this.realm = realm;
+    public Api(Context context) {
+        this.context = context;
+        this.realm = Realm.getInstance(context);
     }
 
     public void updateArticles(@Nullable final ApiCallback apiCallback) {
-        Api.request().articles(new Callback<JsonArray<Article>>() {
+        request().articles(new Callback<JsonArray<Article>>() {
             @Override
             public void success(JsonArray<Article> jsonArticles, Response response) {
                 realm.beginTransaction();
@@ -116,7 +119,7 @@ public class Api {
     }
 
     public void updateAuthors(@Nullable final ApiCallback apiCallback) {
-        Api.request().authors(new Callback<JsonArray<Author>>() {
+        request().authors(new Callback<JsonArray<Author>>() {
             @Override
             public void success(JsonArray<Author> jsonAuthors, Response response) {
                 realm.beginTransaction();
