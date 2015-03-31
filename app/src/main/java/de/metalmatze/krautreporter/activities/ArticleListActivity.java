@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 
+import com.crashlytics.android.Crashlytics;
+
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
-import io.realm.Realm;
+import io.fabric.sdk.android.Fabric;
 
 public class ArticleListActivity extends ActionBarActivity implements ArticleListFragment.Callbacks, ArticleDetailFragment.ActionBarTitle {
 
@@ -24,6 +25,8 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_article_list);
 
         if (findViewById(R.id.article_detail_container) != null) {
@@ -31,11 +34,6 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
         }
 
         actionBar = getSupportActionBar();
-
-        Realm realm = Realm.getInstance(getApplicationContext());
-
-        Api.with(realm).updateAuthors();
-        Api.with(realm).updateArticles();
     }
 
     @Override
