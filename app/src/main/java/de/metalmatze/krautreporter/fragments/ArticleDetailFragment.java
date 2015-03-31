@@ -30,7 +30,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -179,7 +179,9 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void setDate(Date date) {
-        articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(date.getTime()));
+        DateFormat dateInstance = DateFormat.getDateInstance();
+        String dateText = dateInstance.format(date.getTime());
+        articleDate.setText(dateText);
     }
 
     private void setImage(String url) {
