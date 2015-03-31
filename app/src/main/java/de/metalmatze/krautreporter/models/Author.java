@@ -1,9 +1,12 @@
 package de.metalmatze.krautreporter.models;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
+import de.metalmatze.krautreporter.api.JsonArray;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Author extends RealmObject {
@@ -36,6 +39,11 @@ public class Author extends RealmObject {
     private RealmList<Image> images;
 
     private RealmList<Article> articles;
+
+    @Ignore
+    @Expose
+    @SerializedName("images")
+    private JsonArray<Image> serializedImages;
 
     public int getId() {
         return id;
@@ -115,5 +123,13 @@ public class Author extends RealmObject {
 
     public void setArticles(RealmList<Article> articles) {
         this.articles = articles;
+    }
+
+    public JsonArray<Image> getSerializedImages() {
+        return serializedImages;
+    }
+
+    public void setSerializedImages(JsonArray<Image> serializedImages) {
+        this.serializedImages = serializedImages;
     }
 }

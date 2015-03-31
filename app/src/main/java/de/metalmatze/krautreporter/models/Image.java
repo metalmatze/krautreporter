@@ -3,9 +3,11 @@ package de.metalmatze.krautreporter.models;
 import com.google.gson.annotations.Expose;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Image extends RealmObject {
 
+    @PrimaryKey
     @Expose
     private int id;
 
