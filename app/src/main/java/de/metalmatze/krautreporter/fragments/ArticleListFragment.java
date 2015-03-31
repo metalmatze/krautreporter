@@ -87,6 +87,11 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
         swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.refresh1,
+                R.color.refresh2,
+                R.color.refresh3
+        );
 
         return fragmentView;
     }

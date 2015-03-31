@@ -11,4 +11,8 @@
     <item name="subhead" type="color">@color/headline</item>
     <item name="body" type="color">@color/headline</item>
 
+    <item name="refresh1" type="color">@color/krautAccent</item>
+    <item name="refresh2" type="color">@color/krautAccent</item>
+    <item name="refresh3" type="color">@color/krautPrimary</item>
+
 </resources>
