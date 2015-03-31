@@ -30,14 +30,16 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
-import de.metalmatze.krautreporter.models.Author;
+import de.metalmatze.krautreporter.models.Image;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -48,6 +50,7 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     public static final String ARTICLE_ID = "article_id";
+    public static final String LOG_TAG = ArticleDetailFragment.class.getSimpleName();
 
     private Context context;
 
@@ -56,7 +59,6 @@ public class ArticleDetailFragment extends Fragment {
     private List<Target> picassoTargets = new ArrayList<>();
 
     private Article article;
-    private Author author;
 
     @InjectView(R.id.author_image) ImageView articleAuthorImage;
     @InjectView(R.id.author_name) TextView articleAuthorName;
@@ -92,8 +94,6 @@ public class ArticleDetailFragment extends Fragment {
                 article = articles.first();
             }
         }
-
-        author = realm.where(Author.class).equalTo("id", article.getAuthor()).findFirst();
     }
 
     @Override
@@ -126,12 +126,19 @@ public class ArticleDetailFragment extends Fragment {
 
             setHeadline(article.getHeadline());
             setDate(article.getDate());
-            setImage(article.getImage());
             setExcerpt(article.getExcerpt());
             setContent(article.getContent());
+            setArticleAuthorName(article.getAuthor().getName());
 
-            setArticleAuthorName(author.getName());
-            setArticleAuthorImage(author.getImage());
+            Image articleImage = article.getImages().where().equalTo("width", 1000).findFirst();
+            if (articleImage != null) {
+                setImage(articleImage.getSrc());
+            }
+
+            Image authorImage = article.getAuthor().getImages().where().equalTo("width", 340).findFirst();
+            if (authorImage != null) {
+                setArticleAuthorImage(authorImage.getSrc());
+            }
         }
 
         return rootView;
@@ -171,18 +178,13 @@ public class ArticleDetailFragment extends Fragment {
         articleHeadline.setText(headline);
     }
 
-    private void setDate(String date) {
-        articleDate.setText(date);
+    private void setDate(Date date) {
+        articleDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(date.getTime()));
     }
 
     private void setImage(String url) {
-        if (url != null && ! url.equals("")) {
-            articleImage.setVisibility(View.VISIBLE);
-            picasso.load(getString(R.string.url_krautreporter) + url).into(articleImage);
-        } else {
-            articleImage.setVisibility(View.GONE);
-        }
-
+        articleImage.setVisibility(View.VISIBLE);
+        picasso.load(getString(R.string.url_krautreporter) + url).into(articleImage);
     }
 
     private void setExcerpt(String excerpt) {

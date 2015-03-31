@@ -4,25 +4,32 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleAdapter;
+import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
 import de.metalmatze.krautreporter.models.Article;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener {
+public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     public interface Callbacks {
+
         public void onItemSelected(int id);
     }
+
+    public static final String TAG = ArticleListFragment.class.getSimpleName();
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -34,6 +41,11 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     private LinearLayoutManager layoutManager;
 
+    @InjectView(R.id.swipeRefreshArticles)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @InjectView(R.id.recyclerView)
+    RecyclerView recyclerView;
+
     public ArticleListFragment() {
     }
 
@@ -43,7 +55,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
         Realm realm = Realm.getInstance(getActivity().getApplicationContext());
 
-        RealmResults<Article> articles = realm.where(Article.class).findAll();
+        final RealmResults<Article> articles = realm.where(Article.class).findAll();
         articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
 
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -57,30 +69,26 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 adapter.notifyDataSetChanged();
             }
         });
+
+        Api.with(realm).updateAuthors(null);
+        Api.with(realm).updateArticles(null);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_article_list, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        ButterKnife.inject(this, fragmentView);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
-        return view;
-    }
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null) {
-        }
+        return fragmentView;
     }
 
     @Override
@@ -101,7 +109,14 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void onRefresh() {
+        Api.with(Realm.getInstance(getActivity())).updateArticles(new Api.ApiCallback() {
+            @Override
+            public void finished() {
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
     }
 }
