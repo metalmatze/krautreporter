@@ -146,7 +146,7 @@ public class ArticleDetailFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(getString(R.string.url_krautreporter) + article.getAuthor().getUrl()));
+                    intent.setData(Uri.parse(article.getAuthor().getUrl()));
                     startActivity(intent);
                 }
             });
@@ -177,7 +177,7 @@ public class ArticleDetailFragment extends Fragment {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());
-            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.url_krautreporter) + article.getUrl());
+            intent.putExtra(Intent.EXTRA_TEXT, article.getUrl());
 
             startActivity(Intent.createChooser(intent, getString(R.string.share_article)));
         }
@@ -197,7 +197,7 @@ public class ArticleDetailFragment extends Fragment {
 
     private void setImage(String url) {
         articleImage.setVisibility(View.VISIBLE);
-        picasso.load(getString(R.string.url_krautreporter) + url).into(articleImage);
+        picasso.load(url).into(articleImage);
     }
 
     private void setExcerpt(String excerpt) {
@@ -306,7 +306,7 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void setArticleAuthorImage(String url) {
-        picasso.load(getString(R.string.url_krautreporter) + url).into(articleAuthorImage);
+        picasso.load(url).into(articleAuthorImage);
     }
 
 }
