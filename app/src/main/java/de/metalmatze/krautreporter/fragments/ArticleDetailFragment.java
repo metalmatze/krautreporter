@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -60,6 +61,7 @@ public class ArticleDetailFragment extends Fragment {
 
     private Article article;
 
+    @InjectView(R.id.author) RelativeLayout articleAuthor;
     @InjectView(R.id.author_image) ImageView articleAuthorImage;
     @InjectView(R.id.author_name) TextView articleAuthorName;
     @InjectView(R.id.article_headline) TextView articleHeadline;
@@ -139,6 +141,15 @@ public class ArticleDetailFragment extends Fragment {
             if (authorImage != null) {
                 setArticleAuthorImage(authorImage.getSrc());
             }
+
+            articleAuthor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(getString(R.string.url_krautreporter) + article.getAuthor().getUrl()));
+                    startActivity(intent);
+                }
+            });
         }
 
         return rootView;

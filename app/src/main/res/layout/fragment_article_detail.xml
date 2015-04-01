@@ -6,42 +6,48 @@
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/author_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="@dimen/activity_margin_vertical"
-            android:longClickable="false"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:contentDescription="Image of article's author" />
-
-        <TextView
-            android:id="@+id/author_name"
+        <RelativeLayout
+            android:id="@+id/author"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/author_image"
-            android:paddingLeft="@dimen/activity_margin_horizontal"
-            android:paddingRight="@dimen/activity_margin_horizontal"
-            android:paddingBottom="@dimen/activity_margin_vertical"
-            android:gravity="center"
-            android:text="Author"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/subhead"
-            android:textIsSelectable="true"
-            android:textSize="@dimen/abc_text_size_medium_material" />
+            android:layout_height="fill_parent">
+
+            <ImageView
+                android:id="@+id/author_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/activity_margin_vertical"
+                android:longClickable="false"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:contentDescription="Image of article's author" />
+
+            <TextView
+                android:id="@+id/author_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/author_image"
+                android:paddingLeft="@dimen/activity_margin_horizontal"
+                android:paddingRight="@dimen/activity_margin_horizontal"
+                android:paddingBottom="@dimen/activity_margin_vertical"
+                android:gravity="center"
+                android:text="Author"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                android:textColor="@color/subhead"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/abc_text_size_medium_material" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/article_headline"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/author_name"
+            android:layout_below="@+id/author"
             android:paddingLeft="@dimen/article_margin_horizontal"
             android:paddingRight="@dimen/article_margin_horizontal"
             android:paddingBottom="@dimen/activity_margin_vertical"
