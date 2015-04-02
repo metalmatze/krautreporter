@@ -33,6 +33,9 @@ public class Article extends RealmObject {
     @Expose
     private boolean morgenpost;
 
+    @Expose
+    private boolean preview;
+
     @Index
     @Expose
     private String url;
@@ -109,6 +112,14 @@ public class Article extends RealmObject {
 
     public void setMorgenpost(boolean morgenpost) {
         this.morgenpost = morgenpost;
+    }
+
+    public boolean isPreview() {
+        return preview;
+    }
+
+    public void setPreview(boolean preview) {
+        this.preview = preview;
     }
 
     public String getUrl() {

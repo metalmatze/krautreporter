@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/adapter_article_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/activity_margin_horizontal"
-    android:id="@+id/adapter_article_layout">
+    android:orientation="vertical"
+    android:padding="@dimen/activity_margin_horizontal">
+
+    <ImageView
+        android:id="@+id/article_image"
+        android:layout_width="match_parent"
+        android:scaleType="fitEnd"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:adjustViewBounds="true"
+        android:layout_marginBottom="8dp" />
 
     <TextView
+        android:id="@+id/article_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/article_author"
+        android:text="AUTHOR"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="@color/subhead"
-        android:text="Author"/>
+        android:textColor="@color/subhead" />
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/article_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@color/headline"
-        android:textStyle="bold"
-        android:text="Title" />
+        android:textStyle="bold" />
 
 </LinearLayout>
