@@ -79,28 +79,8 @@ public class Api {
         request().articles(new Callback<JsonArray<Article>>() {
             @Override
             public void success(JsonArray<Article> jsonArticles, Response response) {
-                realm.beginTransaction();
-                List<Article> realmArticles = realm.copyToRealmOrUpdate(jsonArticles.data);
 
-                int articleIndex = 0;
-                for(Article article : realmArticles) {
-                    int authorId = jsonArticles.data.get(articleIndex).getSerializedAuthor();
-                    Author author = realm.where(Author.class)
-                                            .equalTo("id", authorId)
-                                            .findFirst();
-                    article.setAuthor(author);
-
-                    List<Image> serializedImages = jsonArticles.data.get(articleIndex).getSerializedImages().data;
-                    List<Image> realmImages = realm.copyToRealmOrUpdate(serializedImages);
-
-                    for (Image image : realmImages) {
-                        article.getImages().add(image);
-                    }
-
-                    articleIndex++;
-                }
-
-                realm.commitTransaction();
+                saveArticles(jsonArticles);
 
                 if (apiCallback != null) {
                     apiCallback.finished();
@@ -116,6 +96,54 @@ public class Api {
                 }
             }
         });
+    }
+
+    public void updateArticlesOlderThan(int id, @Nullable final ApiCallback apiCallback) {
+        request().articlesOlderThan(id, new Callback<JsonArray<Article>>() {
+            @Override
+            public void success(JsonArray<Article> articleJsonArray, Response response) {
+
+                saveArticles(articleJsonArray);
+
+                if (apiCallback != null) {
+                    apiCallback.finished();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+
+                if (apiCallback != null) {
+                    apiCallback.finished();
+                }
+            }
+        });
+    }
+
+    private void saveArticles(JsonArray<Article> jsonArticles) {
+        realm.beginTransaction();
+        List<Article> realmArticles = realm.copyToRealmOrUpdate(jsonArticles.data);
+
+        int articleIndex = 0;
+        for (Article article : realmArticles) {
+            int authorId = jsonArticles.data.get(articleIndex).getSerializedAuthor();
+            Author author = realm.where(Author.class)
+                    .equalTo("id", authorId)
+                    .findFirst();
+            article.setAuthor(author);
+
+            List<Image> serializedImages = jsonArticles.data.get(articleIndex).getSerializedImages().data;
+            List<Image> realmImages = realm.copyToRealmOrUpdate(serializedImages);
+
+            for (Image image : realmImages) {
+                article.getImages().add(image);
+            }
+
+            articleIndex++;
+        }
+
+        realm.commitTransaction();
     }
 
     public void updateAuthors(@Nullable final ApiCallback apiCallback) {
