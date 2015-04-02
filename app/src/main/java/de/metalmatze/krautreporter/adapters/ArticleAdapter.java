@@ -78,6 +78,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         return articles.size();
     }
 
+    public Article getLastArticle() {
+        return articles.last();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView articleImage;
