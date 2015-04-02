@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,23 +17,23 @@
                 android:id="@+id/author_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_margin="@dimen/activity_margin_vertical"
-                android:longClickable="false"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="true"
-                android:contentDescription="Image of article's author" />
+                android:layout_margin="@dimen/activity_margin_vertical"
+                android:contentDescription="Image of article's author"
+                android:longClickable="false" />
 
             <TextView
                 android:id="@+id/author_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/author_image"
+                android:gravity="center"
+                android:paddingBottom="@dimen/activity_margin_vertical"
                 android:paddingLeft="@dimen/activity_margin_horizontal"
                 android:paddingRight="@dimen/activity_margin_horizontal"
-                android:paddingBottom="@dimen/activity_margin_vertical"
-                android:gravity="center"
                 android:text="AUTHOR"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                 android:textColor="@color/subhead"
@@ -48,24 +47,24 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/author"
+            android:gravity="center"
+            android:paddingBottom="@dimen/activity_margin_vertical"
             android:paddingLeft="@dimen/article_margin_horizontal"
             android:paddingRight="@dimen/article_margin_horizontal"
-            android:paddingBottom="@dimen/activity_margin_vertical"
-            android:gravity="center"
             android:text="Headline"
-            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="@color/headline"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/article_date"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/article_headline"
-            android:paddingBottom="@dimen/activity_margin_vertical"
             android:gravity="center"
+            android:paddingBottom="@dimen/activity_margin_vertical"
             android:text="06.11.2014"
-            android:id="@+id/article_date"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:textColor="@color/subhead"
             android:textIsSelectable="true"
@@ -82,33 +81,33 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/article_excerpt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:text="@string/ipsum"
-            android:id="@+id/article_excerpt"
-            android:textIsSelectable="true"
-            android:textColor="@color/body"
             android:layout_below="@+id/article_image"
-            android:textSize="@dimen/abc_text_size_large_material"
+            android:paddingBottom="@dimen/activity_margin_vertical"
             android:paddingLeft="@dimen/article_margin_horizontal"
             android:paddingRight="@dimen/article_margin_horizontal"
             android:paddingTop="@dimen/activity_margin_vertical"
-            android:paddingBottom="@dimen/activity_margin_vertical" />
+            android:text="@string/ipsum"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/body"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/abc_text_size_large_material" />
 
         <TextView
+            android:id="@+id/article_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-            android:text="@string/ipsum"
-            android:id="@+id/article_content"
+            android:layout_below="@+id/article_excerpt"
+            android:paddingBottom="@dimen/activity_margin_vertical"
             android:paddingLeft="@dimen/article_margin_horizontal"
             android:paddingRight="@dimen/article_margin_horizontal"
             android:paddingTop="@dimen/activity_margin_vertical"
-            android:paddingBottom="@dimen/activity_margin_vertical"
-            android:textIsSelectable="true"
+            android:text="@string/ipsum"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
             android:textColor="@color/body"
-            android:layout_below="@+id/article_excerpt"
+            android:textIsSelectable="true"
             android:textSize="@dimen/abc_text_size_medium_material" />
 
     </RelativeLayout>

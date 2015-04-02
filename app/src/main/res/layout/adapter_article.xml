@@ -9,11 +9,11 @@
     <ImageView
         android:id="@+id/article_image"
         android:layout_width="match_parent"
-        android:scaleType="fitEnd"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_marginBottom="8dp"
         android:adjustViewBounds="true"
-        android:layout_marginBottom="8dp" />
+        android:scaleType="fitEnd"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/article_author"
