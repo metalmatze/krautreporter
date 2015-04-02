@@ -28,7 +28,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         public void onItemSelected(int id);
     }
 
-    public static final String TAG = ArticleListFragment.class.getSimpleName();
+    public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
 
     /**
      * The fragment's current OnItemSelectedCallback object, which is notified of list item
@@ -36,9 +36,20 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
      */
     private OnItemSelectedCallback onItemSelectedCallback;
 
+    /**
+     * The RecyclerView adapter that has all the articles
+     */
     private ArticleAdapter adapter;
 
+    /**
+     * The LinearLayoutManager for the RecyclerView
+     */
     private LinearLayoutManager layoutManager;
+
+    /**
+     * This indicates if more older articles are currently loading
+     */
+    private boolean isLoading = false;
 
     @InjectView(R.id.swipeRefreshArticles)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -96,6 +107,34 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 R.color.refresh3
         );
 
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (!isLoading) {
+                    int itemCountVisible = layoutManager.getChildCount();
+                    int itemCountTotal = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    if ((itemCountVisible + firstVisibleItemPosition) >= itemCountTotal - 2) {
+                        Article lastArticle = adapter.getLastArticle();
+
+                        if (lastArticle.getOrder() > 0) {
+                            isLoading = true;
+
+                            Api.with(getActivity()).updateArticlesOlderThan(lastArticle.getId(), new Api.ApiCallback() {
+                                @Override
+                                public void finished() {
+                                    isLoading = false;
+                                }
+                            });
+                        }
+
+                    }
+                }
+            }
+        });
+
         return fragmentView;
     }
 
@@ -104,16 +143,16 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         super.onAttach(activity);
 
         // Activities containing this fragment must implement its callbacks.
-	if (!(activity instanceof OnItemSelectedCallback)) {
+        if (!(activity instanceof OnItemSelectedCallback)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-	onItemSelectedCallback = (OnItemSelectedCallback) activity;
+        onItemSelectedCallback = (OnItemSelectedCallback) activity;
     }
 
     @Override
     public void onItemClick(Article article) {
-	onItemSelectedCallback.onItemSelected(article.getId());
+        onItemSelectedCallback.onItemSelected(article.getId());
     }
 
     @Override
