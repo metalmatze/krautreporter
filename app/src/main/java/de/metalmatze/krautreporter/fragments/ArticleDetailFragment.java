@@ -168,7 +168,7 @@ public class ArticleDetailFragment extends Fragment {
 
         if (itemId == R.id.action_browser) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(getString(R.string.url_krautreporter) + article.getUrl()));
+            intent.setData(Uri.parse(article.getUrl()));
 
             startActivity(intent);
         }
@@ -302,7 +302,7 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void setArticleAuthorName(String name) {
-        articleAuthorName.setText(name);
+        articleAuthorName.setText(name.toUpperCase());
     }
 
     private void setArticleAuthorImage(String url) {

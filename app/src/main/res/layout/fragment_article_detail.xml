@@ -35,7 +35,7 @@
                 android:paddingRight="@dimen/activity_margin_horizontal"
                 android:paddingBottom="@dimen/activity_margin_vertical"
                 android:gravity="center"
-                android:text="Author"
+                android:text="AUTHOR"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                 android:textColor="@color/subhead"
                 android:textIsSelectable="true"
