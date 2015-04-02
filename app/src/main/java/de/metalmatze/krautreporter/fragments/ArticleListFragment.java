@@ -24,18 +24,17 @@ import io.realm.RealmResults;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    public interface Callbacks {
-
+    public interface OnItemSelectedCallback {
         public void onItemSelected(int id);
     }
 
     public static final String TAG = ArticleListFragment.class.getSimpleName();
 
     /**
-     * The fragment's current callback object, which is notified of list item
+     * The fragment's current OnItemSelectedCallback object, which is notified of list item
      * clicks.
      */
-    private Callbacks callbacks;
+    private OnItemSelectedCallback onItemSelectedCallback;
 
     private ArticleAdapter adapter;
 
@@ -105,16 +104,16 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         super.onAttach(activity);
 
         // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
+	if (!(activity instanceof OnItemSelectedCallback)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        callbacks = (Callbacks) activity;
+	onItemSelectedCallback = (OnItemSelectedCallback) activity;
     }
 
     @Override
     public void onItemClick(Article article) {
-        callbacks.onItemSelected(article.getId());
+	onItemSelectedCallback.onItemSelected(article.getId());
     }
 
     @Override
