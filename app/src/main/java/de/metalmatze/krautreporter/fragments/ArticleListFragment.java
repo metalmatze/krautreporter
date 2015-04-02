@@ -70,8 +70,12 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
             }
         });
 
-        Api.with(getActivity()).updateAuthors(null);
-        Api.with(getActivity()).updateArticles(null);
+        Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
+            @Override
+            public void finished() {
+                Api.with(getActivity()).updateArticles(null);
+            }
+        });
     }
 
     @Override
