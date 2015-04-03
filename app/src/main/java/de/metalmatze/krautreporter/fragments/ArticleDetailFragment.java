@@ -20,12 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -48,7 +45,6 @@ public class ArticleDetailFragment extends Fragment {
 
     private ActionBarTitle actionBarTitle;
     private Picasso picasso;
-    private List<Target> picassoTargets = new ArrayList<>();
 
     private Article article;
 
@@ -200,8 +196,9 @@ public class ArticleDetailFragment extends Fragment {
         WebSettings webSettings = articleContentWebview.getSettings();
 
         content = String.format("<link rel='stylesheet' type='text/css' href='file:///android_asset/content.css' />%s", content);
+        content = String.format("<base href='%s'>%s", getString(R.string.url_krautreporter), content);
 
-        articleContentWebview.loadDataWithBaseURL(getString(R.string.url_krautreporter), content, "text/html", "utf-8", null);
+        articleContentWebview.loadDataWithBaseURL("file:///android_assest", content, "text/html", "utf-8", null);
         articleContentWebview.setPadding(0, 0, 0, 0);
         articleContentWebview.setBackgroundColor(getResources().getColor(R.color.krautWindowBackground));
 
