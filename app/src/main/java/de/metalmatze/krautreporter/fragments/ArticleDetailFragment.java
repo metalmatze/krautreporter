@@ -213,7 +213,7 @@ public class ArticleDetailFragment extends Fragment {
         parseContentImages(contentStringBuilder);
 
         articleContent.setText(contentStringBuilder);
-        articleContent.setLinkTextColor(getResources().getColor(R.color.krautAccent));
+        articleContent.setLinkTextColor(getResources().getColor(R.color.accent));
         articleContent.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
