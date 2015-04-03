@@ -1,9 +1,14 @@
 package de.metalmatze.krautreporter.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -27,6 +32,13 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
 
         Fabric.with(this, new Crashlytics());
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionInflater transitionInflater = TransitionInflater.from(this);
+            Transition transitionExit = transitionInflater.inflateTransition(R.transition.article_transition);
+
+            getWindow().setExitTransition(transitionExit);
+        }
+
         setContentView(R.layout.activity_article_list);
 
         if (findViewById(R.id.article_detail_container) != null) {
@@ -37,7 +49,7 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
     }
 
     @Override
-    public void onItemSelected(int id) {
+    public void onItemSelected(View view, int id) {
         if (twoPane) {
             Bundle arguments = new Bundle();
             arguments.putInt(ArticleDetailFragment.ARTICLE_ID, id);
@@ -52,7 +64,15 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
             Intent intent = new Intent(this, ArticleDetailActivity.class);
             intent.putExtra(ArticleDetailFragment.ARTICLE_ID, id);
 
-            startActivity(intent);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                view.setTransitionName("article_image");
+                ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(this, view, view.getTransitionName());
+
+                startActivity(intent, options.toBundle());
+            } else {
+                startActivity(intent);
+            }
         }
     }
 

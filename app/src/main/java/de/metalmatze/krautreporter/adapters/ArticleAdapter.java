@@ -23,7 +23,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     protected final Context context;
 
     public interface OnItemClickListener {
-        public void onItemClick(Article article);
+        public void onItemClick(View view, Article article);
     }
 
     public static final String LOG_TAG = ArticleAdapter.class.getSimpleName();
@@ -67,8 +67,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         viewHolder.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v) {
-                onItemClickListener.onItemClick(article);
+            public void onClick(View view) {
+                onItemClickListener.onItemClick(view, article);
             }
         });
     }

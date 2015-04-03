@@ -1,10 +1,13 @@
 package de.metalmatze.krautreporter.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.NavUtils;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.MenuItem;
 
 import de.metalmatze.krautreporter.R;
@@ -17,6 +20,13 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionInflater transitionInflater = TransitionInflater.from(this);
+            Transition transitionEnter = transitionInflater.inflateTransition(R.transition.article_transition);
+
+            getWindow().setEnterTransition(transitionEnter);
+        }
 
         setContentView(R.layout.activity_article_detail);
 

@@ -25,7 +25,7 @@ import io.realm.RealmResults;
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     public interface OnItemSelectedCallback {
-        public void onItemSelected(int id);
+        public void onItemSelected(View view, int id);
     }
 
     public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
@@ -151,8 +151,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     }
 
     @Override
-    public void onItemClick(Article article) {
-        onItemSelectedCallback.onItemSelected(article.getId());
+    public void onItemClick(View view, Article article) {
+        onItemSelectedCallback.onItemSelected(view, article.getId());
     }
 
     @Override
