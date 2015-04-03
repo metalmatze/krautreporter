@@ -1,0 +1,26 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+@font-face {
+    font-family: TisaSans;
+    src: url("file:///android_asset/fonts/TisaSans.otf")
+}
+body {
+    font-family: TisaSans;
+}
+
+a {
+    color: #fd0243;
+    text-decoration: none;
+}
+
+.article-block--divider {
+}
+.article-block--divider hr {
+    border-top: 2px solid #E4E4E4;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+}
