@@ -21,6 +21,7 @@ import io.realm.RealmResults;
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
 
     protected final Context context;
+    private int selectedItem = -1;
 
     public interface OnItemClickListener {
         public void onItemClick(Article article);
@@ -50,7 +51,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         final Article article = this.articles.get(position);
 
         if (article.isPreview()) {
@@ -64,10 +65,20 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         viewHolder.setArticleTitle(article.getTitle());
         viewHolder.setArticleAuthor(article.getAuthor().getName());
 
+        if (selectedItem == position) {
+            viewHolder.setSelected(true);
+        } else {
+            viewHolder.setSelected(false);
+        }
+
         viewHolder.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                int oldPosition = selectedItem;
+                viewHolder.setSelected(true);
+                selectedItem = position;
+                notifyItemChanged(oldPosition);
                 onItemClickListener.onItemClick(article);
             }
         });
@@ -141,6 +152,17 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         public void setOnClickListener(View.OnClickListener listener) {
             itemView.setOnClickListener(listener);
+        }
+
+        public void setSelected(boolean isSelected) {
+
+            int color = context.getResources().getColor(android.R.color.transparent);
+
+            if (isSelected) {
+                color = context.getResources().getColor(android.R.color.white);
+            }
+
+            itemView.setBackgroundColor(color);
         }
     }
 }
