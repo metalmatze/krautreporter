@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -25,6 +26,7 @@ import io.realm.RealmResults;
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     public interface OnItemSelectedCallback {
+
         public void onItemSelected(int id);
     }
 
@@ -46,6 +48,10 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
      */
     private LinearLayoutManager layoutManager;
 
+    private Realm realm;
+
+    private RealmResults<Article> articles;
+
     /**
      * This indicates if more older articles are currently loading
      */
@@ -55,6 +61,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     SwipeRefreshLayout swipeRefreshLayout;
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @InjectView(R.id.progressBar)
+    ProgressBar progressBar;
 
     public ArticleListFragment() {
     }
@@ -63,22 +71,15 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Realm realm = Realm.getInstance(getActivity().getApplicationContext());
+        realm = Realm.getInstance(getActivity().getApplicationContext());
 
-        final RealmResults<Article> articles = realm.where(Article.class).findAll();
+        articles = realm.where(Article.class).findAll();
         articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
 
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
-
-        realm.addChangeListener(new RealmChangeListener() {
-            @Override
-            public void onChange() {
-                adapter.notifyDataSetChanged();
-            }
-        });
 
         Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
             @Override
@@ -135,7 +136,27 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
             }
         });
 
+        setProgressBarVisibility();
+
+        realm.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                setProgressBarVisibility();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
         return fragmentView;
+    }
+
+    private void setProgressBarVisibility() {
+        if (articles.size() > 0) {
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
     }
 
     @Override
