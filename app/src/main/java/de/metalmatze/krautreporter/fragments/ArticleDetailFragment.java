@@ -200,7 +200,7 @@ public class ArticleDetailFragment extends Fragment {
 
         articleContentWebview.loadDataWithBaseURL("file:///android_assest", content, "text/html", "utf-8", null);
         articleContentWebview.setPadding(0, 0, 0, 0);
-        articleContentWebview.setBackgroundColor(getResources().getColor(R.color.krautWindowBackground));
+        articleContentWebview.setBackgroundColor(getResources().getColor(R.color.background));
         articleContentWebview.setVerticalScrollBarEnabled(false);
         articleContentWebview.setHorizontalScrollBarEnabled(false);
 
