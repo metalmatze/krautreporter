@@ -6,7 +6,7 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:id="@+id/author"
@@ -108,7 +108,16 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
             android:textColor="@color/body"
             android:textIsSelectable="true"
-            android:textSize="@dimen/abc_text_size_medium_material" />
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:visibility="gone" />
+
+        <WebView
+            android:id="@+id/article_content_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/article_content"
+            android:layout_marginLeft="@dimen/article_margin_horizontal"
+            android:layout_marginRight="@dimen/article_margin_horizontal" />
 
     </RelativeLayout>
 

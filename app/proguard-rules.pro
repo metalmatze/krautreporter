@@ -16,22 +16,30 @@
 #   public *;
 #}
 
-# activeandroid
--keep class com.activeandroid.** { *; }
--keep class com.activeandroid.**.** { *; }
--keep class * extends com.activeandroid.Model
--keep class * extends com.activeandroid.serializer.TypeSerializer
-
--keepattributes Column
--keepattributes Table
--keepclasseswithmembers class * { @com.activeandroid.annotation.Column <fields>; }
--dontwarn com.squareup.okhttp.**
-
+# ButterKnife
 -dontwarn butterknife.internal.**
 -keep class **$$ViewInjector { *; }
 -keepnames class * { @butterknife.InjectView *;}
 
+# Realm
 -keepnames public class * extends io.realm.RealmObject
 -keep class io.realm.** { *; }
 -dontwarn javax.**
 -dontwarn io.realm.**
+
+#Retrofit
+-keepclassmembernames interface * {
+    @retrofit.http.* <methods>;
+}
+
+-keep class retrofit.** { *; }
+-keep class de.metalmatze.krautreporter.models.** { *; }
+-keepclassmembernames interface * {
+    @retrofit.http.* <methods>;
+}
+
+-dontwarn retrofit.**
+-keep class retrofit.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+-dontwarn okio.**
