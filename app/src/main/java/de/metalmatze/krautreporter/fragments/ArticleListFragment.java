@@ -25,18 +25,17 @@ import io.realm.RealmResults;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    public interface OnItemSelectedCallback {
-
+    public interface FragmentCallback {
         public void onItemSelected(int id);
+        public boolean isTwoPane();
     }
-
     public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
 
     /**
      * The fragment's current OnItemSelectedCallback object, which is notified of list item
      * clicks.
      */
-    private OnItemSelectedCallback onItemSelectedCallback;
+    private FragmentCallback fragmentCallback;
 
     /**
      * The RecyclerView adapter that has all the articles
@@ -51,6 +50,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     private Realm realm;
 
     private RealmResults<Article> articles;
+
+    private boolean twoPange;
 
     /**
      * This indicates if more older articles are currently loading
@@ -79,7 +80,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
+        adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this, twoPange);
 
         Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
             @Override
@@ -164,16 +165,17 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         super.onAttach(activity);
 
         // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof OnItemSelectedCallback)) {
+        if (!(activity instanceof FragmentCallback)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        onItemSelectedCallback = (OnItemSelectedCallback) activity;
+        fragmentCallback = (FragmentCallback) activity;
+        twoPange = fragmentCallback.isTwoPane();
     }
 
     @Override
     public void onItemClick(Article article) {
-        onItemSelectedCallback.onItemSelected(article.getId());
+        fragmentCallback.onItemSelected(article.getId());
     }
 
     @Override

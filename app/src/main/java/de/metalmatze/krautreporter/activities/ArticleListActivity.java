@@ -12,7 +12,7 @@ import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
 import io.fabric.sdk.android.Fabric;
 
-public class ArticleListActivity extends ActionBarActivity implements ArticleListFragment.OnItemSelectedCallback, ArticleDetailFragment.ActionBarTitle {
+public class ArticleListActivity extends ActionBarActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
 
     protected ActionBar actionBar;
 
@@ -54,6 +54,11 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
 
             startActivity(intent);
         }
+    }
+
+    @Override
+    public boolean isTwoPane() {
+        return twoPane;
     }
 
     @Override

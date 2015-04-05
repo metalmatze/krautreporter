@@ -21,6 +21,7 @@ import io.realm.RealmResults;
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
 
     protected final Context context;
+    private final boolean twoPane;
     private int selectedItem = -1;
 
     public interface OnItemClickListener {
@@ -33,7 +34,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     private RealmResults<Article> articles;
 
-    public ArticleAdapter(@NonNull Context context, RealmResults<Article> articles, OnItemClickListener onItemClickListener) {
+    public ArticleAdapter(@NonNull Context context, RealmResults<Article> articles, OnItemClickListener onItemClickListener, boolean isTwoPane) {
         if (articles == null) {
             throw new IllegalArgumentException("articles cannot be null");
         }
@@ -41,6 +42,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.context = context;
         this.articles = articles;
         this.onItemClickListener = onItemClickListener;
+        twoPane = isTwoPane;
     }
 
     @Override
@@ -65,20 +67,24 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         viewHolder.setArticleTitle(article.getTitle());
         viewHolder.setArticleAuthor(article.getAuthor().getName());
 
-        if (selectedItem == position) {
-            viewHolder.setSelected(true);
-        } else {
-            viewHolder.setSelected(false);
+        if (twoPane) {
+            if (selectedItem == position) {
+                viewHolder.setSelected(true);
+            } else {
+                viewHolder.setSelected(false);
+            }
         }
 
         viewHolder.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                int oldPosition = selectedItem;
-                viewHolder.setSelected(true);
-                selectedItem = position;
-                notifyItemChanged(oldPosition);
+                if (twoPane) {
+                    int oldPosition = selectedItem;
+                    viewHolder.setSelected(true);
+                    selectedItem = position;
+                    notifyItemChanged(oldPosition);
+                }
                 onItemClickListener.onItemClick(article);
             }
         });
@@ -100,8 +106,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         private final TextView articleAuthor;
         private Context context;
 
-        public static ViewHolder newInstance(Context context, View view)
-        {
+        public static ViewHolder newInstance(Context context, View view) {
             ImageView articleImage = (ImageView) view.findViewById(R.id.article_image);
             TextView articleTitle = (TextView) view.findViewById(R.id.article_title);
             TextView articleAuthor = (TextView) view.findViewById(R.id.article_author);
