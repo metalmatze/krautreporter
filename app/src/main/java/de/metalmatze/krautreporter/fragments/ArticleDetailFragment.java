@@ -55,7 +55,7 @@ public class ArticleDetailFragment extends Fragment {
     @InjectView(R.id.article_date) TextView articleDate;
     @InjectView(R.id.article_image) ImageView articleImage;
     @InjectView(R.id.article_excerpt) TextView articleExcerpt;
-    @InjectView(R.id.article_content_webview) WebView articleContentWebview;
+    @InjectView(R.id.article_content) WebView articleContent;
 
     public ArticleDetailFragment() {
     }
@@ -191,16 +191,16 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void setContent(String content) {
-        WebSettings webSettings = articleContentWebview.getSettings();
+        WebSettings webSettings = articleContent.getSettings();
 
         content = String.format("<link rel='stylesheet' type='text/css' href='file:///android_asset/content.css' />%s", content);
         content = String.format("<base href='%s'>%s", getString(R.string.url_krautreporter), content);
 
-        articleContentWebview.loadDataWithBaseURL("file:///android_assest", content, "text/html", "utf-8", null);
-        articleContentWebview.setPadding(0, 0, 0, 0);
-        articleContentWebview.setBackgroundColor(getResources().getColor(R.color.background));
-        articleContentWebview.setVerticalScrollBarEnabled(false);
-        articleContentWebview.setHorizontalScrollBarEnabled(false);
+        articleContent.loadDataWithBaseURL("file:///android_assest", content, "text/html", "utf-8", null);
+        articleContent.setPadding(0, 0, 0, 0);
+        articleContent.setBackgroundColor(getResources().getColor(R.color.background));
+        articleContent.setVerticalScrollBarEnabled(false);
+        articleContent.setHorizontalScrollBarEnabled(false);
 
         webSettings.setDefaultTextEncodingName("utf-8");
         webSettings.setLoadsImagesAutomatically(true);
