@@ -11,5 +11,6 @@
     <string name="share_article">Share article</string>
     <string name="error_response_rss">Unable to update articles.</string>
     <string name="error_open_image">Unable to open image.</string>
+    <string name="action_become_member">Become a member</string>
 
 </resources>
