@@ -75,6 +75,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/article_date"
+            android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
             android:paddingLeft="@dimen/article_image_margin_horizontal"
             android:paddingRight="@dimen/article_image_margin_horizontal"
@@ -95,27 +96,11 @@
             android:textIsSelectable="true"
             android:textSize="@dimen/abc_text_size_large_material" />
 
-        <TextView
-            android:id="@+id/article_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/article_excerpt"
-            android:paddingBottom="@dimen/activity_margin_vertical"
-            android:paddingLeft="@dimen/article_margin_horizontal"
-            android:paddingRight="@dimen/article_margin_horizontal"
-            android:paddingTop="@dimen/activity_margin_vertical"
-            android:text="@string/ipsum"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-            android:textColor="@color/body"
-            android:textIsSelectable="true"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:visibility="gone" />
-
         <WebView
             android:id="@+id/article_content_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/article_content"
+            android:layout_below="@+id/article_excerpt"
             android:layout_marginLeft="@dimen/article_margin_horizontal"
             android:layout_marginRight="@dimen/article_margin_horizontal" />
 

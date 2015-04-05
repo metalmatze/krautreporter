@@ -55,7 +55,6 @@ public class ArticleDetailFragment extends Fragment {
     @InjectView(R.id.article_date) TextView articleDate;
     @InjectView(R.id.article_image) ImageView articleImage;
     @InjectView(R.id.article_excerpt) TextView articleExcerpt;
-    @InjectView(R.id.article_content) TextView articleContent;
     @InjectView(R.id.article_content_webview) WebView articleContentWebview;
 
     public ArticleDetailFragment() {
@@ -110,7 +109,6 @@ public class ArticleDetailFragment extends Fragment {
             articleHeadline.setTypeface(typefaceTisaSansBold);
             articleDate.setTypeface(typefaceTisaSans);
             articleExcerpt.setTypeface(typefaceTisaSansBold);
-            articleContent.setTypeface(typefaceTisaSans);
 
             actionBarTitle.setActionBarTitle(article.getTitle());
 
