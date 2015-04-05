@@ -70,11 +70,19 @@
             android:textIsSelectable="true"
             android:textSize="@dimen/abc_text_size_medium_material" />
 
+        <ProgressBar
+            android:id="@+id/article_image_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/article_date"
+            android:layout_centerHorizontal="true"
+            android:indeterminate="false" />
+
         <ImageView
             android:id="@+id/article_image"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/article_date"
+            android:layout_below="@+id/article_image_progressbar"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
             android:paddingLeft="@dimen/article_image_margin_horizontal"

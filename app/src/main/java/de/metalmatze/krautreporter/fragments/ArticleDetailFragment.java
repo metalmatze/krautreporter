@@ -16,9 +16,11 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -54,6 +56,7 @@ public class ArticleDetailFragment extends Fragment {
     @InjectView(R.id.article_headline) TextView articleHeadline;
     @InjectView(R.id.article_date) TextView articleDate;
     @InjectView(R.id.article_image) ImageView articleImage;
+    @InjectView(R.id.article_image_progressbar) ProgressBar articleImageProgressBar;
     @InjectView(R.id.article_excerpt) TextView articleExcerpt;
     @InjectView(R.id.article_content) WebView articleContent;
 
@@ -121,6 +124,8 @@ public class ArticleDetailFragment extends Fragment {
             Image articleImage = article.getImages().where().equalTo("width", 1000).findFirst();
             if (articleImage != null) {
                 setImage(articleImage.getSrc());
+            } else {
+                articleImageProgressBar.setVisibility(View.GONE);
             }
 
             Image authorImage = article.getAuthor().getImages().where().equalTo("width", 340).findFirst();
@@ -182,8 +187,20 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void setImage(String url) {
-        articleImage.setVisibility(View.VISIBLE);
-        picasso.load(url).into(articleImage);
+        articleImageProgressBar.setVisibility(View.VISIBLE);
+
+        picasso.load(url).into(articleImage, new Callback() {
+            @Override
+            public void onSuccess() {
+                articleImage.setVisibility(View.VISIBLE);
+                articleImageProgressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+                articleImageProgressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setExcerpt(String excerpt) {
