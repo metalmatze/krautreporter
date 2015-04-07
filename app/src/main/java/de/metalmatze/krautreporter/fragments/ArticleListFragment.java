@@ -51,8 +51,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     private RealmResults<Article> articles;
 
-    private boolean twoPange;
-
     /**
      * This indicates if more older articles are currently loading
      */
@@ -69,6 +67,18 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Activities containing this fragment must implement its callbacks.
+        if (!(activity instanceof FragmentCallback)) {
+            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+        }
+
+        fragmentCallback = (FragmentCallback) activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -80,7 +90,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this, twoPange);
+        adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
 
         Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
             @Override
@@ -150,6 +160,13 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         return fragmentView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        adapter.setTwoPane(fragmentCallback.isTwoPane());
+    }
+
     private void setProgressBarVisibility() {
         if (articles.size() > 0) {
             progressBar.setVisibility(View.GONE);
@@ -158,19 +175,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof FragmentCallback)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
-        }
-
-        fragmentCallback = (FragmentCallback) activity;
-        twoPange = fragmentCallback.isTwoPane();
     }
 
     @Override

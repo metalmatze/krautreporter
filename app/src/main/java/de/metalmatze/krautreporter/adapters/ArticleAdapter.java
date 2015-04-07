@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import io.realm.RealmResults;
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
 
     protected final Context context;
-    private final boolean twoPane;
+    private boolean twoPane;
     private int selectedItem = -1;
 
     public interface OnItemClickListener {
@@ -34,7 +35,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     private RealmResults<Article> articles;
 
-    public ArticleAdapter(@NonNull Context context, RealmResults<Article> articles, OnItemClickListener onItemClickListener, boolean isTwoPane) {
+    public ArticleAdapter(@NonNull Context context, RealmResults<Article> articles, OnItemClickListener onItemClickListener) {
         if (articles == null) {
             throw new IllegalArgumentException("articles cannot be null");
         }
@@ -42,7 +43,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.context = context;
         this.articles = articles;
         this.onItemClickListener = onItemClickListener;
-        twoPane = isTwoPane;
+    }
+
+    public void setTwoPane(boolean twoPane) {
+        this.twoPane = twoPane;
+        Log.d(LOG_TAG, String.format("setTwoPane : %b", this.twoPane));
     }
 
     @Override
