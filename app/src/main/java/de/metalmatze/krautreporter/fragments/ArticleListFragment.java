@@ -25,6 +25,8 @@ import io.realm.RealmResults;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
+
     public interface FragmentCallback {
         public void onItemSelected(int id);
         public boolean isTwoPane();
@@ -38,17 +40,23 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     private FragmentCallback fragmentCallback;
 
     /**
-     * The RecyclerView adapter that has all the articles
+     * The RecyclerView adapter that has all the articles.
      */
     private ArticleAdapter adapter;
 
     /**
-     * The LinearLayoutManager for the RecyclerView
+     * The LinearLayoutManager for the RecyclerView.
      */
     private LinearLayoutManager layoutManager;
 
+    /**
+     * The realm instance used to fetch the articles.
+     */
     private Realm realm;
 
+    /**
+     * The list of all articles.
+     */
     private RealmResults<Article> articles;
 
     /**
@@ -164,7 +172,18 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            adapter.setSelectedItem(savedInstanceState.getInt(ADAPTER_SELECTED_ITEM, -1));
+        }
+
         adapter.setTwoPane(fragmentCallback.isTwoPane());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(ADAPTER_SELECTED_ITEM, adapter.getSelectedItem());
     }
 
     private void setProgressBarVisibility() {
