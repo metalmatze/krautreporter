@@ -10,9 +10,13 @@ import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
+import de.metalmatze.krautreporter.helpers.Mixpanel;
 import io.fabric.sdk.android.Fabric;
 
 public class ArticleListActivity extends ActionBarActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
@@ -42,6 +46,12 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
     }
 
     @Override
+    protected void onDestroy() {
+        Mixpanel.getInstance(this).flush();
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_article_list, menu);
 
@@ -53,6 +63,8 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
         int id = item.getItemId();
 
         if (id == R.id.action_become_member) {
+            Mixpanel.getInstance(this).track("Become member clicked", null);
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://krautreporter.de/pages/mitglied_werden"));
 
@@ -64,6 +76,15 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
 
     @Override
     public void onItemSelected(int id) {
+
+        try {
+            JSONObject mixpanelProperties = new JSONObject();
+            mixpanelProperties.put("Article ID", id);
+            Mixpanel.getInstance(this).track("Article selected", mixpanelProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         if (twoPane) {
             Bundle arguments = new Bundle();
             arguments.putInt(ArticleDetailFragment.ARTICLE_ID, id);
