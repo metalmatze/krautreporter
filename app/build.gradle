@@ -56,4 +56,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.1.0@aar') {
         transitive = true;
     }
+    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.mixpanel.android:mixpanel-android:4.5.3-JDK7'
 }
