@@ -23,12 +23,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     protected final Context context;
     private boolean twoPane;
+
     private int selectedItem = -1;
 
     public interface OnItemClickListener {
+
         public void onItemClick(Article article);
     }
-
     public static final String LOG_TAG = ArticleAdapter.class.getSimpleName();
 
     protected OnItemClickListener onItemClickListener;
@@ -43,11 +44,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.context = context;
         this.articles = articles;
         this.onItemClickListener = onItemClickListener;
-    }
-
-    public void setTwoPane(boolean twoPane) {
-        this.twoPane = twoPane;
-        Log.d(LOG_TAG, String.format("setTwoPane : %b", this.twoPane));
     }
 
     @Override
@@ -102,6 +98,19 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     public Article getLastArticle() {
         return articles.last();
+    }
+
+    public void setTwoPane(boolean twoPane) {
+        this.twoPane = twoPane;
+        Log.d(LOG_TAG, String.format("setTwoPane : %b", this.twoPane));
+    }
+
+    public int getSelectedItem() {
+        return selectedItem;
+    }
+
+    public void setSelectedItem(int selectedItem) {
+        this.selectedItem = selectedItem;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
