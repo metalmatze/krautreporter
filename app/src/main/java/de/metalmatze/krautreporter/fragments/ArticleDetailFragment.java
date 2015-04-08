@@ -23,12 +23,16 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
+import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Image;
 import io.realm.Realm;
@@ -133,14 +137,23 @@ public class ArticleDetailFragment extends Fragment {
                 setArticleAuthorImage(authorImage.getSrc());
             }
 
-            articleAuthor.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(article.getAuthor().getUrl()));
-                    startActivity(intent);
-                }
-            });
+                articleAuthor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put(getString(R.string.mixpanel_author_id), article.getAuthor().getId());
+                            Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_author_clicked), jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(article.getAuthor().getUrl()));
+                        startActivity(intent);
+                    }
+                });
         }
 
         return rootView;
@@ -157,6 +170,15 @@ public class ArticleDetailFragment extends Fragment {
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_browser) {
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
+                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_in_browser), jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(article.getUrl()));
 
