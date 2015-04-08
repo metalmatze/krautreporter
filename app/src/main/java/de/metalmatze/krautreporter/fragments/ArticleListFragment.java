@@ -12,12 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
+import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -29,8 +33,10 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     public interface FragmentCallback {
         public void onItemSelected(int id);
+
         public boolean isTwoPane();
     }
+
     public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
 
     /**
@@ -130,28 +136,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
-                if (!isLoading) {
-                    int itemCountVisible = layoutManager.getChildCount();
-                    int itemCountTotal = layoutManager.getItemCount();
-                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
-                    if ((itemCountVisible + firstVisibleItemPosition) >= itemCountTotal - 2) {
-                        Article lastArticle = adapter.getLastArticle();
-
-                        if (lastArticle.getOrder() > 0) {
-                            isLoading = true;
-
-                            Api.with(getActivity()).updateArticlesOlderThan(lastArticle.getId(), new Api.ApiCallback() {
-                                @Override
-                                public void finished() {
-                                    isLoading = false;
-                                }
-                            });
-                        }
-
-                    }
-                }
+                onScrolledLoadMore();
             }
         });
 
@@ -166,6 +151,38 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         });
 
         return fragmentView;
+    }
+
+    private void onScrolledLoadMore() {
+        if (!isLoading) {
+            int itemCountVisible = layoutManager.getChildCount();
+            int itemCountTotal = layoutManager.getItemCount();
+            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+            if ((itemCountVisible + firstVisibleItemPosition) >= itemCountTotal - 2) {
+                Article lastArticle = adapter.getLastArticle();
+
+                if (lastArticle.getOrder() > 0) {
+                    isLoading = true;
+
+                    Api.with(getActivity()).updateArticlesOlderThan(lastArticle.getId(), new Api.ApiCallback() {
+                        @Override
+                        public void finished() {
+                            isLoading = false;
+
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put(getString(R.string.mixpanel_articles_total), articles.size() + 1);
+                                Mixpanel.getInstance(getActivity())
+                                        .track(getString(R.string.mixpanel_articles_older), jsonObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
     @Override
@@ -206,6 +223,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
             @Override
             public void finished() {
+                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
