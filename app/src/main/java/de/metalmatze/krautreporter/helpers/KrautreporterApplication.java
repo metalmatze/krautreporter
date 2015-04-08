@@ -1,4 +1,4 @@
-package de.metalmatze.krautreporter;
+package de.metalmatze.krautreporter.helpers;
 
 import android.app.Application;
 
