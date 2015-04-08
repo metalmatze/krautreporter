@@ -63,7 +63,7 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
         int id = item.getItemId();
 
         if (id == R.id.action_become_member) {
-            Mixpanel.getInstance(this).track("Become member clicked", null);
+            Mixpanel.getInstance(this).track(getString(R.string.mixpanel_become_member), null);
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://krautreporter.de/pages/mitglied_werden"));
@@ -78,9 +78,9 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
     public void onItemSelected(int id) {
 
         try {
-            JSONObject mixpanelProperties = new JSONObject();
-            mixpanelProperties.put("Article ID", id);
-            Mixpanel.getInstance(this).track("Article selected", mixpanelProperties);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(getString(R.string.mixpanel_article_id), id);
+            Mixpanel.getInstance(this).track(getString(R.string.mixpanel_article_selected), jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
