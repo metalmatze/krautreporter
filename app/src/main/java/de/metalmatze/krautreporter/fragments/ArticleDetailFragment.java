@@ -53,18 +53,36 @@ public class ArticleDetailFragment extends Fragment {
     private Picasso picasso;
 
     private Article article;
+    private Date readingBegin;
+    private long readingDuration = 0;
 
-    @InjectView(R.id.author) RelativeLayout articleAuthor;
-    @InjectView(R.id.author_image) ImageView articleAuthorImage;
-    @InjectView(R.id.author_name) TextView articleAuthorName;
-    @InjectView(R.id.article_headline) TextView articleHeadline;
-    @InjectView(R.id.article_date) TextView articleDate;
-    @InjectView(R.id.article_image) ImageView articleImage;
-    @InjectView(R.id.article_image_progressbar) ProgressBar articleImageProgressBar;
-    @InjectView(R.id.article_excerpt) TextView articleExcerpt;
-    @InjectView(R.id.article_content) WebView articleContent;
+    @InjectView(R.id.author)
+    RelativeLayout articleAuthor;
+    @InjectView(R.id.author_image)
+    ImageView articleAuthorImage;
+    @InjectView(R.id.author_name)
+    TextView articleAuthorName;
+    @InjectView(R.id.article_headline)
+    TextView articleHeadline;
+    @InjectView(R.id.article_date)
+    TextView articleDate;
+    @InjectView(R.id.article_image)
+    ImageView articleImage;
+    @InjectView(R.id.article_image_progressbar)
+    ProgressBar articleImageProgressBar;
+    @InjectView(R.id.article_excerpt)
+    TextView articleExcerpt;
+    @InjectView(R.id.article_content)
+    WebView articleContent;
 
     public ArticleDetailFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        actionBarTitle = (ActionBarTitle) activity;
     }
 
     @Override
@@ -78,25 +96,17 @@ public class ArticleDetailFragment extends Fragment {
 
         if (getArguments().containsKey(ARTICLE_ID) && getArguments().getInt(ARTICLE_ID) >= 0) {
             article = realm
-                        .where(Article.class)
-                        .equalTo("id", getArguments().getInt(ARTICLE_ID))
-                        .findFirst();
-        }
-        else {
+                    .where(Article.class)
+                    .equalTo("id", getArguments().getInt(ARTICLE_ID))
+                    .findFirst();
+        } else {
             RealmResults<Article> articles = realm.where(Article.class).findAll();
             articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
 
-            if(articles.size() > 0) {
+            if (articles.size() > 0) {
                 article = articles.first();
             }
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        actionBarTitle = (ActionBarTitle) activity;
     }
 
     @Override
@@ -137,26 +147,56 @@ public class ArticleDetailFragment extends Fragment {
                 setArticleAuthorImage(authorImage.getSrc());
             }
 
-                articleAuthor.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            articleAuthor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put(getString(R.string.mixpanel_author_id), article.getAuthor().getId());
-                            Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_author_clicked), jsonObject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(article.getAuthor().getUrl()));
-                        startActivity(intent);
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put(getString(R.string.mixpanel_author_id), article.getAuthor().getId());
+                        Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_author_clicked), jsonObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(article.getAuthor().getUrl()));
+                    startActivity(intent);
+                }
+            });
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        readingBegin = new Date();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Date now = new Date();
+        long currentReadingDuration = (now.getTime() - readingBegin.getTime()) / 1000 % 60;
+        readingDuration = readingDuration + currentReadingDuration;
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
+            jsonObject.put(getString(R.string.mixpanel_duration), readingDuration);
+            Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_read), jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        super.onDestroy();
     }
 
     @Override
@@ -186,6 +226,15 @@ public class ArticleDetailFragment extends Fragment {
         }
 
         if (itemId == R.id.action_share) {
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
+                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_shared), jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());

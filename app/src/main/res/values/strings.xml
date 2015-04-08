@@ -20,5 +20,8 @@
     <string name="mixpanel_author_id" translatable="false">Author ID</string>
     <string name="mixpanel_article_in_browser" translatable="false">Article opened in broswer</string>
     <string name="mixpanel_articles_total" translatable="false">Articles total</string>
+    <string name="mixpanel_article_read" translatable="false">Article read</string>
+    <string name="mixpanel_duration" translatable="false">Reading duration</string>
+    <string name="mixpanel_article_shared" translatable="false">Article shared</string>
 
 </resources>
