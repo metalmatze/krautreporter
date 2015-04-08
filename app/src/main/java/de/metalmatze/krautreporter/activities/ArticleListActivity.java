@@ -10,9 +10,6 @@ import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
@@ -76,15 +73,6 @@ public class ArticleListActivity extends ActionBarActivity implements ArticleLis
 
     @Override
     public void onItemSelected(int id) {
-
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(getString(R.string.mixpanel_article_id), id);
-            Mixpanel.getInstance(this).track(getString(R.string.mixpanel_article_selected), jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         if (twoPane) {
             Bundle arguments = new Bundle();
             arguments.putInt(ArticleDetailFragment.ARTICLE_ID, id);

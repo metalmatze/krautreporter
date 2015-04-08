@@ -12,7 +12,6 @@
     <string name="error_response_rss">Unable to update articles.</string>
     <string name="error_open_image">Unable to open image.</string>
     <string name="action_become_member">Become a member</string>
-    <string name="mixpanel_article_selected" translatable="false">Article clicked</string>
     <string name="mixpanel_become_member" translatable="false">"Become member" clicked</string>
     <string name="mixpanel_article_id" translatable="false">Article ID</string>
     <string name="mixpanel_articles_refreshed" translatable="false">Articles refreshed</string>
