@@ -206,10 +206,10 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     private void setProgressBarVisibility() {
         if (articles.size() > 0) {
             progressBar.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
         } else {
             progressBar.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
+            swipeRefreshLayout.setVisibility(View.GONE);
         }
     }
 
