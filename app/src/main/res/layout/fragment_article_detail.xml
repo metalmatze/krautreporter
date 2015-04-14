@@ -76,6 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/article_date"
             android:layout_centerHorizontal="true"
+            android:layout_margin="32dp"
             android:indeterminate="false" />
 
         <ImageView
