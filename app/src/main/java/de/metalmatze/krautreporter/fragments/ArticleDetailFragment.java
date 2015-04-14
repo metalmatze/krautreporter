@@ -25,9 +25,15 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -283,6 +289,8 @@ public class ArticleDetailFragment extends Fragment {
         content = String.format("<link rel='stylesheet' type='text/css' href='file:///android_asset/content.css' />%s", content);
         content = String.format("<base href='%s'>%s", getString(R.string.url_krautreporter), content);
 
+        content = setContentImages(content);
+
         articleContent.loadDataWithBaseURL("file:///android_assest", content, "text/html", "utf-8", null);
         articleContent.setPadding(0, 0, 0, 0);
         articleContent.setBackgroundColor(getResources().getColor(R.color.background));
@@ -291,8 +299,27 @@ public class ArticleDetailFragment extends Fragment {
 
         webSettings.setDefaultTextEncodingName("utf-8");
         webSettings.setLoadsImagesAutomatically(true);
-        webSettings.setJavaScriptEnabled(true);
         webSettings.setDefaultFontSize(18);
+    }
+
+    private String setContentImages(String content) {
+        Document document = Jsoup.parse(content);
+
+        Elements imgs = document.getElementsByTag("img");
+        for (Element img : imgs) {
+            String srcset = img.attr("srcset");
+
+            Pattern pattern = Pattern.compile("(.*) 300w, (.*) 600w, (.*) 1000w, (.*) 2000w", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(srcset);
+
+            while (matcher.find()) {
+                img.attr("src", matcher.group(3));
+                img.attr("srcset", "");
+                img.attr("width", "100%");
+            }
+        }
+
+        return document.outerHtml();
     }
 
     private void setArticleAuthorName(String name) {

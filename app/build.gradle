@@ -58,4 +58,5 @@ dependencies {
     }
     compile 'com.google.android.gms:play-services:7.0.0'
     compile 'com.mixpanel.android:mixpanel-android:4.5.3-JDK7'
+    compile 'org.jsoup:jsoup:1.8.1'
 }
