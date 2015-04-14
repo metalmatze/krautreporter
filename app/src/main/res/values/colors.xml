@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item name="krautPrimary" type="color">#fffd0243</item>
-    <item name="krautPrimaryDark" type="color">#ffe6023d</item>
-    <item name="krautAccent" type="color">@color/krautPrimary</item>
-    <item name="krautWindowBackground" type="color">#fff2f2f2</item>
-    <item name="krautTextColor" type="color">#ff333333</item>
+    <color name="primary">#fffd0243</color>
+    <color name="primary_dark">#ffe6023d</color>
+    <color name="accent">@color/primary</color>
+    <color name="primary_text">#ff333333</color>
+    <color name="background">#fff2f2f2</color>
 
-    <item name="headline" type="color">#de000000</item>
-    <item name="subhead" type="color">@color/headline</item>
-    <item name="body" type="color">@color/headline</item>
+    <color name="headline">#de000000</color>
+    <color name="subhead">@color/headline</color>
+    <color name="body">@color/headline</color>
+
+    <color name="refresh1">@color/accent</color>
+    <color name="refresh2">@color/accent</color>
+    <color name="refresh3">@color/primary</color>
 
 </resources>

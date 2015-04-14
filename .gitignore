@@ -10,3 +10,4 @@
 /app/manifest-merger-release-report.txt
 /app/src/main/res/values/com_crashlytics_export_strings.xml
 /app/src/main/assets/crashlytics-build.properties
+/app/src/main/res/values/mixpanel_strings.xml

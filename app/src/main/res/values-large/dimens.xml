@@ -1,4 +1,4 @@
 <resources>
-    <dimen name="article_margin_horizontal">50dp</dimen>
-    <dimen name="article_image_margin_horizontal">@dimen/article_margin_horizontal</dimen>
+    <dimen name="article_margin_horizontal">32dp</dimen>
+    <dimen name="article_image_margin_horizontal">16dp</dimen>
 </resources>
