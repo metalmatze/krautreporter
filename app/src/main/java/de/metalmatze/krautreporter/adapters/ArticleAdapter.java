@@ -58,7 +58,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         final Article article = this.articles.get(position);
 
         if (article.isPreview()) {
-            Image articleImage = article.getImages().where().equalTo("width", 600).findFirst();
+            Image articleImage = article.getImages().where().equalTo("width", 1000).findFirst();
             if (articleImage != null) {
                 viewHolder.setArticleImage(articleImage.getSrc());
             }
