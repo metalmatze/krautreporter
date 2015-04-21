@@ -6,11 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+
+import com.malinskiy.superrecyclerview.OnMoreListener;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,12 +71,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
      */
     private boolean isLoading = false;
 
-    @InjectView(R.id.swipeRefreshArticles)
-    SwipeRefreshLayout swipeRefreshLayout;
-    @InjectView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @InjectView(R.id.progressBar)
-    ProgressBar progressBar;
+    @InjectView(R.id.superRecyclerView)
+    SuperRecyclerView recyclerView;
 
     public ArticleListFragment() {
     }
@@ -126,49 +123,24 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(
+        recyclerView.setRefreshListener(this);
+        recyclerView.setRefreshingColorResources(
                 R.color.refresh1,
                 R.color.refresh2,
+                R.color.refresh3,
                 R.color.refresh3
         );
 
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.setupMoreListener(new OnMoreListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                onScrolledLoadMore();
-            }
-        });
-
-        setProgressBarVisibility();
-
-        realm.addChangeListener(new RealmChangeListener() {
-            @Override
-            public void onChange() {
-                setProgressBarVisibility();
-                adapter.notifyDataSetChanged();
-            }
-        });
-
-        return fragmentView;
-    }
-
-    private void onScrolledLoadMore() {
-        if (!isLoading) {
-            int itemCountVisible = layoutManager.getChildCount();
-            int itemCountTotal = layoutManager.getItemCount();
-            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
-            if ((itemCountVisible + firstVisibleItemPosition) >= itemCountTotal - 2) {
+            public void onMoreAsked(int numberOfItems, int numberBeforeMore, int currentItemPos) {
                 Article lastArticle = adapter.getLastArticle();
 
                 if (lastArticle.getOrder() > 0) {
-                    isLoading = true;
-
                     Api.with(getActivity()).updateArticlesOlderThan(lastArticle.getId(), new Api.ApiCallback() {
                         @Override
                         public void finished() {
-                            isLoading = false;
+                            recyclerView.hideMoreProgress();
 
                             try {
                                 JSONObject jsonObject = new JSONObject();
@@ -182,7 +154,16 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                     });
                 }
             }
-        }
+        }, 3);
+
+        realm.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        return fragmentView;
     }
 
     @Override
@@ -203,16 +184,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         outState.putInt(ADAPTER_SELECTED_ITEM, adapter.getSelectedItem());
     }
 
-    private void setProgressBarVisibility() {
-        if (articles.size() > 0) {
-            progressBar.setVisibility(View.GONE);
-            swipeRefreshLayout.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     public void onItemClick(Article article) {
         fragmentCallback.onItemSelected(article.getId());
@@ -224,9 +195,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
             @Override
             public void finished() {
                 Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
             }
         });
     }

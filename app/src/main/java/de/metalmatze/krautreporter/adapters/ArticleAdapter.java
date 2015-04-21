@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.malinskiy.superrecyclerview.swipe.BaseSwipeAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -19,7 +20,7 @@ import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Image;
 import io.realm.RealmResults;
 
-public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
+public class ArticleAdapter extends BaseSwipeAdapter {
 
     protected final Context context;
     private boolean twoPane;
@@ -27,9 +28,9 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     private int selectedItem = -1;
 
     public interface OnItemClickListener {
-
         public void onItemClick(Article article);
     }
+
     public static final String LOG_TAG = ArticleAdapter.class.getSimpleName();
 
     protected OnItemClickListener onItemClickListener;
@@ -47,24 +48,26 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.adapter_article, parent, false);
 
         return ViewHolder.newInstance(context, itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(BaseSwipeableViewHolder holder, final int position) {
+        final ViewHolder viewHolder = (ViewHolder) holder;
         final Article article = this.articles.get(position);
 
         if (article.isPreview()) {
-            Image articleImage = article.getImages().where().equalTo("width", 1000).findFirst();
-            if (articleImage != null) {
-                viewHolder.setArticleImage(articleImage.getSrc());
+            Image image = article.getImages().where().equalTo("width", 1000).findFirst();
+            if (image != null) {
+                viewHolder.setArticleImage(image.getSrc());
             }
         } else {
             viewHolder.hideArticleImage();
         }
+
         viewHolder.setArticleTitle(article.getTitle());
         viewHolder.setArticleAuthor(article.getAuthor().getName());
 
@@ -113,7 +116,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.selectedItem = selectedItem;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends BaseSwipeableViewHolder {
 
         private final ImageView articleImage;
         private final TextView articleTitle;
