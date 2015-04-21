@@ -34,6 +34,7 @@ public class Api {
     protected Realm realm;
 
     private static ApiInterface singleton;
+    private boolean deleteAllOldArticles = false;
 
     public ApiInterface request() {
 
@@ -75,10 +76,24 @@ public class Api {
         this.realm = Realm.getInstance(context);
     }
 
+    public Api deleteAllOldArticles() {
+        this.deleteAllOldArticles = true;
+
+        return this;
+    }
+
     public void updateArticles(@Nullable final ApiCallback apiCallback) {
         request().articles(new Callback<JsonArray<Article>>() {
             @Override
             public void success(JsonArray<Article> jsonArticles, Response response) {
+
+                if (deleteAllOldArticles) {
+                    realm.beginTransaction();
+                    realm.where(Article.class).findAll().clear();
+                    realm.commitTransaction();
+
+                    deleteAllOldArticles = false;
+                }
 
                 saveArticles(jsonArticles);
 

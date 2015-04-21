@@ -193,7 +193,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
-        Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
+        Api.with(getActivity()).deleteAllOldArticles().updateArticles(new Api.ApiCallback() {
             @Override
             public void finished() {
                 Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
