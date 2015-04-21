@@ -152,6 +152,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                             }
                         }
                     });
+                } else {
+                    recyclerView.hideMoreProgress();
                 }
             }
         }, 3);
