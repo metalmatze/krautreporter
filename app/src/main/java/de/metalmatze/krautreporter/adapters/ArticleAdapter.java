@@ -69,7 +69,10 @@ public class ArticleAdapter extends BaseSwipeAdapter {
         }
 
         viewHolder.setArticleTitle(article.getTitle());
-        viewHolder.setArticleAuthor(article.getAuthor().getName());
+
+        if (article.getAuthor().getName() != null) {
+            viewHolder.setArticleAuthor(article.getAuthor().getName());
+        }
 
         if (twoPane) {
             if (selectedItem == position) {
