@@ -43,3 +43,6 @@
 -keepattributes Signature
 -keepattributes Exceptions
 -dontwarn okio.**
+
+#SuperRecyclerView
+-dontwarn com.malinskiy.superrecyclerview.SwipeDismissRecyclerViewTouchListener*

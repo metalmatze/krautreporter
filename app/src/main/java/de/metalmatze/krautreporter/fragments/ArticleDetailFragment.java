@@ -35,8 +35,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
@@ -62,23 +62,23 @@ public class ArticleDetailFragment extends Fragment {
     private Date readingBegin;
     private long readingDuration = 0;
 
-    @InjectView(R.id.author)
+    @Bind(R.id.author)
     RelativeLayout articleAuthor;
-    @InjectView(R.id.author_image)
+    @Bind(R.id.author_image)
     ImageView articleAuthorImage;
-    @InjectView(R.id.author_name)
+    @Bind(R.id.author_name)
     TextView articleAuthorName;
-    @InjectView(R.id.article_headline)
+    @Bind(R.id.article_headline)
     TextView articleHeadline;
-    @InjectView(R.id.article_date)
+    @Bind(R.id.article_date)
     TextView articleDate;
-    @InjectView(R.id.article_image)
+    @Bind(R.id.article_image)
     ImageView articleImage;
-    @InjectView(R.id.article_image_progressbar)
+    @Bind(R.id.article_image_progressbar)
     ProgressBar articleImageProgressBar;
-    @InjectView(R.id.article_excerpt)
+    @Bind(R.id.article_excerpt)
     TextView articleExcerpt;
-    @InjectView(R.id.article_content)
+    @Bind(R.id.article_content)
     WebView articleContent;
 
     public ArticleDetailFragment() {
@@ -120,7 +120,7 @@ public class ArticleDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         setHasOptionsMenu(true);
 

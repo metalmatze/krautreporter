@@ -16,8 +16,8 @@ import com.malinskiy.superrecyclerview.SuperRecyclerView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
@@ -71,7 +71,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
      */
     private boolean isLoading = false;
 
-    @InjectView(R.id.superRecyclerView)
+    @Bind(R.id.superRecyclerView)
     SuperRecyclerView recyclerView;
 
     public ArticleListFragment() {
@@ -117,7 +117,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
         View fragmentView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
-        ButterKnife.inject(this, fragmentView);
+        ButterKnife.bind(this, fragmentView);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
