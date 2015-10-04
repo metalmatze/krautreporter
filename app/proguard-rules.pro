@@ -53,3 +53,6 @@
 
 #Mixpanel
 -dontwarn com.mixpanel.**
+
+#Retrolambda
+-dontwarn java.lang.invoke.*

@@ -6,11 +6,15 @@ import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import rx.Observable;
 
 public interface ApiInterface {
 
     @GET("/articles")
     void articles(Callback<JsonArray<Article>> callback);
+
+    @GET("/articles")
+    Observable<JsonArray<Article>> articles();
 
     @GET("/articles")
     void articlesOlderThan(@Query("olderthan") int id, Callback<JsonArray<Article>> callback);

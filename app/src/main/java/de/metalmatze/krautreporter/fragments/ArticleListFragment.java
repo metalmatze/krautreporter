@@ -100,6 +100,16 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
+
+        Api.with(getActivity()).articles()
+                .subscribe(s -> s.data.size());
+
+        Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
+            @Override
+            public void finished() {
+                Api.with(getActivity()).updateArticles(null);
+            }
+        });
     }
 
     @Override
