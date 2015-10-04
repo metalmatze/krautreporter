@@ -46,3 +46,6 @@
 
 #SuperRecyclerView
 -dontwarn com.malinskiy.superrecyclerview.SwipeDismissRecyclerViewTouchListener*
+
+#Retrolambda
+-dontwarn java.lang.invoke.*

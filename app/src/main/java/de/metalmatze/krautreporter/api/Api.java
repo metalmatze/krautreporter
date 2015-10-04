@@ -21,6 +21,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
+import rx.Observable;
 
 public class Api {
 
@@ -71,6 +72,10 @@ public class Api {
     public Api(Context context) {
         this.context = context;
         this.realm = Realm.getInstance(context);
+    }
+
+    public Observable<JsonArray<Article>> articles() {
+        return singleton.articles();
     }
 
     public void updateArticles(@Nullable final ApiCallback apiCallback) {
