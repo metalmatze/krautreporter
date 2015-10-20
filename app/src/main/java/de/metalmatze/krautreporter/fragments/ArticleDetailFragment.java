@@ -47,7 +47,7 @@ import io.realm.RealmResults;
 public class ArticleDetailFragment extends Fragment {
 
     public interface ActionBarTitle {
-        public void setActionBarTitle(String title);
+        void setActionBarTitle(String title);
     }
 
     public static final String ARTICLE_ID = "article_id";

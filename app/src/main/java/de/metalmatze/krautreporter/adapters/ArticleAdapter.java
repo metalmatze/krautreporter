@@ -28,7 +28,7 @@ public class ArticleAdapter extends BaseSwipeAdapter {
     private int selectedItem = -1;
 
     public interface OnItemClickListener {
-        public void onItemClick(Article article);
+        void onItemClick(Article article);
     }
 
     public static final String LOG_TAG = ArticleAdapter.class.getSimpleName();
