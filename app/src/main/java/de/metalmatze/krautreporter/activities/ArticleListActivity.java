@@ -18,8 +18,6 @@ import io.fabric.sdk.android.Fabric;
 
 public class ArticleListActivity extends AppCompatActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
 
-    public static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
-
     protected ActionBar actionBar;
 
     /**

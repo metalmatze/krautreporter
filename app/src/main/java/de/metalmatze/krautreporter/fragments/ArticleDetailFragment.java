@@ -51,7 +51,6 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     public static final String ARTICLE_ID = "article_id";
-    public static final String LOG_TAG = ArticleDetailFragment.class.getSimpleName();
 
     private Context context;
 

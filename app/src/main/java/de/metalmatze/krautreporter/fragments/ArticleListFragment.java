@@ -37,8 +37,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         boolean isTwoPane();
     }
 
-    public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
-
     /**
      * The fragment's current OnItemSelectedCallback object, which is notified of list item
      * clicks.

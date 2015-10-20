@@ -28,8 +28,6 @@ public class Api {
         public void finished();
     }
 
-    public static final String LOG_TAG = Api.class.getSimpleName();
-
     protected final Context context;
     protected Realm realm;
 
