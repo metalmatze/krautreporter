@@ -24,7 +24,9 @@ public class ArticleDetailActivity extends AppCompatActivity implements ArticleD
         setContentView(R.layout.activity_article_detail);
 
         actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
