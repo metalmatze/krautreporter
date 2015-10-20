@@ -33,9 +33,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
 
     public interface FragmentCallback {
-        public void onItemSelected(int id);
-
-        public boolean isTwoPane();
+        void onItemSelected(int id);
+        boolean isTwoPane();
     }
 
     public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
