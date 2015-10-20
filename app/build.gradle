@@ -3,7 +3,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "de.metalmatze.krautreporter"
@@ -11,6 +11,7 @@ android {
         targetSdkVersion 23
         versionCode 10
         versionName "0.2.2"
+        multiDexEnabled true
     }
     buildTypes {
         release {
