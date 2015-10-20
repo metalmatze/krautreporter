@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,7 +16,7 @@ import de.metalmatze.krautreporter.fragments.ArticleListFragment;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
 import io.fabric.sdk.android.Fabric;
 
-public class ArticleListActivity extends ActionBarActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
+public class ArticleListActivity extends AppCompatActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
 
     public static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
 
