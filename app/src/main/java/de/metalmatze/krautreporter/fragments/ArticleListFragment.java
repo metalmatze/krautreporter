@@ -100,13 +100,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
-
-        Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
-            @Override
-            public void finished() {
-                Api.with(getActivity()).updateArticles(null);
-            }
-        });
     }
 
     @Override
@@ -128,6 +121,25 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 R.color.refresh3,
                 R.color.refresh3
         );
+
+        recyclerView.getSwipeToRefresh().post(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView.getSwipeToRefresh().setRefreshing(true);
+            }
+        });
+
+        Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
+            @Override
+            public void finished() {
+                Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
+                    @Override
+                    public void finished() {
+                        recyclerView.getSwipeToRefresh().setRefreshing(false);
+                    }
+                });
+            }
+        });
 
         recyclerView.setupMoreListener(new OnMoreListener() {
             @Override
