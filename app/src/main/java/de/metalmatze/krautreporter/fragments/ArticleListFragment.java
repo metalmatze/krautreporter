@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -21,6 +22,7 @@ import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
+import de.metalmatze.krautreporter.helpers.Settings;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
 import de.metalmatze.krautreporter.services.AuthorService;
@@ -30,9 +32,11 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
     private static final int ARTICLES_BEFORE_MORE = 3;
+    private static final int FIVE_MINUTES = 5 * 60 * 1000;
 
     private ArticleService articleService;
     private AuthorService authorService;
+    private Settings settings;
 
     public interface FragmentCallback {
         void onItemSelected(int id);
@@ -86,6 +90,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         Api api = Api.with(context);
         articleService = new ArticleService(context, api);
         authorService = new AuthorService(context, api);
+        settings = new Settings(context);
     }
 
     @Override
@@ -121,18 +126,22 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 R.color.refresh3
         );
 
-        recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
-        authorService.updateAuthors()
-                .subscribe(authors -> {
-                    Observable.merge(
-                            articleService.getArticles(),
-                            articleService.updateArticles())
-                            .subscribe(articles -> {
-                                this.articles = articles;
-                                adapter.notifyDataSetChanged();
-                                recyclerView.getSwipeToRefresh().setRefreshing(false);
-                            });
-                });
+        // Only update articles on start if it hasn't been done in the past 5 minutes.
+        if (new Date().getTime() - settings.getLastArticlesUpdate() > FIVE_MINUTES) {
+            recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
+            authorService.updateAuthors()
+                    .subscribe(authors -> {
+                        Observable.merge(
+                                articleService.getArticles(),
+                                articleService.updateArticles())
+                                .subscribe(articles -> {
+                                    this.articles = articles;
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.getSwipeToRefresh().setRefreshing(false);
+                                    settings.setLastArticlesUpdate();
+                                });
+                    });
+        }
 
         recyclerView.setupMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
             Article lastArticle = adapter.getLastArticle();
@@ -185,6 +194,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                                 this.articles = articles;
                                 adapter.notifyDataSetChanged();
                                 recyclerView.getSwipeToRefresh().setRefreshing(false);
+                                settings.setLastArticlesUpdate();
                                 Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
                             });
                 });
