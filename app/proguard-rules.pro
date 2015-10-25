@@ -56,3 +56,6 @@
 
 #Retrolambda
 -dontwarn java.lang.invoke.*
+
+#RxJava
+-dontwarn rx.internal.util.unsafe.*
