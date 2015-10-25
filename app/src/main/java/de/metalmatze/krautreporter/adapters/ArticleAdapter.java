@@ -15,10 +15,11 @@ import com.malinskiy.superrecyclerview.swipe.BaseSwipeAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Image;
-import io.realm.RealmResults;
 
 public class ArticleAdapter extends BaseSwipeAdapter {
 
@@ -35,9 +36,9 @@ public class ArticleAdapter extends BaseSwipeAdapter {
 
     protected OnItemClickListener onItemClickListener;
 
-    private RealmResults<Article> articles;
+    private List<Article> articles;
 
-    public ArticleAdapter(@NonNull Context context, RealmResults<Article> articles, OnItemClickListener onItemClickListener) {
+    public ArticleAdapter(@NonNull Context context, List<Article> articles, OnItemClickListener onItemClickListener) {
         if (articles == null) {
             throw new IllegalArgumentException("articles cannot be null");
         }
@@ -82,18 +83,14 @@ public class ArticleAdapter extends BaseSwipeAdapter {
             }
         }
 
-        viewHolder.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                if (twoPane) {
-                    int oldPosition = selectedItem;
-                    viewHolder.setSelected(true);
-                    selectedItem = position;
-                    notifyItemChanged(oldPosition);
-                }
-                onItemClickListener.onItemClick(article);
+        viewHolder.setOnClickListener(view -> {
+            if (twoPane) {
+                int oldPosition = selectedItem;
+                viewHolder.setSelected(true);
+                selectedItem = position;
+                notifyItemChanged(oldPosition);
             }
+            onItemClickListener.onItemClick(article);
         });
     }
 
@@ -103,7 +100,11 @@ public class ArticleAdapter extends BaseSwipeAdapter {
     }
 
     public Article getLastArticle() {
-        return articles.last();
+        if (articles.size() > 0) {
+            return articles.get(articles.size() - 1);
+        }
+
+        return null;
     }
 
     public void setTwoPane(boolean twoPane) {

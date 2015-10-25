@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 23
@@ -38,6 +39,7 @@ buildscript {
     }
     dependencies {
         classpath 'io.fabric.tools:gradle:1.14.4'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.0'
     }
 }
 
@@ -61,7 +63,10 @@ dependencies {
     compile 'com.mixpanel.android:mixpanel-android:4.7.0-RC1'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'io.reactivex:rxandroid:1.0.0'
     compile 'io.realm:realm-android:0.83.1'
     compile 'org.jsoup:jsoup:1.8.3'
 }

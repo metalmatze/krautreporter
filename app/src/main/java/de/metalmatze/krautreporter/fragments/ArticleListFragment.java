@@ -1,6 +1,5 @@
 package de.metalmatze.krautreporter.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,11 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.malinskiy.superrecyclerview.OnMoreListener;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,16 +22,21 @@ import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import de.metalmatze.krautreporter.services.ArticleService;
+import de.metalmatze.krautreporter.services.AuthorService;
+import rx.Observable;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
+    private static final int ARTICLES_BEFORE_MORE = 3;
+
+    private ArticleService articleService;
+    private AuthorService authorService;
 
     public interface FragmentCallback {
         void onItemSelected(int id);
+
         boolean isTwoPane();
     }
 
@@ -55,19 +57,14 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     private LinearLayoutManager layoutManager;
 
     /**
-     * The realm instance used to fetch the articles.
-     */
-    private Realm realm;
-
-    /**
      * The list of all articles.
      */
-    private RealmResults<Article> articles;
+    private List<Article> articles;
 
     /**
      * This indicates if more older articles are currently loading
      */
-    private boolean isLoading = false;
+    private boolean isLoadingMore = false;
 
     @Bind(R.id.superRecyclerView)
     SuperRecyclerView recyclerView;
@@ -85,21 +82,23 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         }
 
         fragmentCallback = (FragmentCallback) context;
+
+        Api api = Api.with(context);
+        articleService = new ArticleService(context, api);
+        authorService = new AuthorService(context, api);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        realm = Realm.getInstance(getActivity().getApplicationContext());
-
-        articles = realm.where(Article.class).findAll();
-        articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
+        articleService.getArticles()
+                .subscribe(articles -> this.articles = articles);
 
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
+        adapter = new ArticleAdapter(getActivity().getApplicationContext(), this.articles, this);
     }
 
     @Override
@@ -122,58 +121,34 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 R.color.refresh3
         );
 
-        recyclerView.getSwipeToRefresh().post(new Runnable() {
-            @Override
-            public void run() {
-                recyclerView.getSwipeToRefresh().setRefreshing(true);
-            }
-        });
-
-        Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
-            @Override
-            public void finished() {
-                Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
-                    @Override
-                    public void finished() {
-                        recyclerView.getSwipeToRefresh().setRefreshing(false);
-                    }
+        recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
+        authorService.updateAuthors()
+                .subscribe(authors -> {
+                    Observable.merge(
+                            articleService.getArticles(),
+                            articleService.updateArticles())
+                            .subscribe(articles -> {
+                                this.articles = articles;
+                                adapter.notifyDataSetChanged();
+                                recyclerView.getSwipeToRefresh().setRefreshing(false);
+                            });
                 });
-            }
-        });
 
-        recyclerView.setupMoreListener(new OnMoreListener() {
-            @Override
-            public void onMoreAsked(int numberOfItems, int numberBeforeMore, int currentItemPos) {
-                Article lastArticle = adapter.getLastArticle();
-
-                if (lastArticle.getOrder() > 0) {
-                    Api.with(getActivity()).updateArticlesOlderThan(lastArticle.getId(), new Api.ApiCallback() {
-                        @Override
-                        public void finished() {
+        recyclerView.setupMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
+            Article lastArticle = adapter.getLastArticle();
+            if (lastArticle.getOrder() > 0 && !isLoadingMore) {
+                isLoadingMore = true;
+                articleService.getArticlesOlderThan(lastArticle.getId())
+                        .subscribe(articles -> {
+                            this.articles = articles;
+                            adapter.notifyDataSetChanged();
                             recyclerView.hideMoreProgress();
-
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put(getString(R.string.mixpanel_articles_total), articles.size() + 1);
-                                Mixpanel.getInstance(getActivity())
-                                        .track(getString(R.string.mixpanel_articles_older), jsonObject);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } else {
-                    recyclerView.hideMoreProgress();
-                }
+                            isLoadingMore = false;
+                        });
+            } else {
+                recyclerView.hideMoreProgress();
             }
-        }, 3);
-
-        realm.addChangeListener(new RealmChangeListener() {
-            @Override
-            public void onChange() {
-                adapter.notifyDataSetChanged();
-            }
-        });
+        }, ARTICLES_BEFORE_MORE);
 
         return fragmentView;
     }
@@ -203,12 +178,15 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
-        Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
-            @Override
-            public void finished() {
-                recyclerView.getSwipeToRefresh().setRefreshing(false);
-                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
-            }
-        });
+        authorService.updateAuthors()
+                .subscribe(authors -> {
+                    articleService.updateArticles()
+                            .subscribe(articles -> {
+                                this.articles = articles;
+                                adapter.notifyDataSetChanged();
+                                recyclerView.getSwipeToRefresh().setRefreshing(false);
+                                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
+                            });
+                });
     }
 }
