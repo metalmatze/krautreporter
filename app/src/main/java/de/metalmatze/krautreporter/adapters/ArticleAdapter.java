@@ -100,7 +100,11 @@ public class ArticleAdapter extends BaseSwipeAdapter {
     }
 
     public Article getLastArticle() {
-        return articles.last();
+        if (articles.size() > 0) {
+            return articles.get(articles.size() - 1);
+        }
+
+        return null;
     }
 
     public void setTwoPane(boolean twoPane) {
