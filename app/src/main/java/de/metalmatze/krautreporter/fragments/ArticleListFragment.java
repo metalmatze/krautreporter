@@ -26,7 +26,6 @@ import de.metalmatze.krautreporter.helpers.Settings;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
 import de.metalmatze.krautreporter.services.AuthorService;
-import rx.Observable;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -131,9 +130,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
             recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
             authorService.updateAuthors()
                     .subscribe(authors -> {
-                        Observable.merge(
-                                articleService.getArticles(),
-                                articleService.updateArticles())
+                        articleService.updateArticles()
                                 .subscribe(articles -> {
                                     this.articles = articles;
                                     adapter.notifyDataSetChanged();
