@@ -127,7 +127,11 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
         // Only update articles on start if it hasn't been done in the past 5 minutes.
         if (new Date().getTime() - settings.getLastArticlesUpdate() > FIVE_MINUTES) {
-            recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
+
+            if (articles.size() > 0) { // Don't show swipeToRefresh spinner if empty spinner already there.
+                recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
+            }
+
             authorService.updateAuthors()
                     .subscribe(authors -> {
                         articleService.updateArticles()
