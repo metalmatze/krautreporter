@@ -2,18 +2,18 @@ package de.metalmatze.krautreporter.helpers;
 
 import android.app.Application;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class KrautreporterApplication extends Application {
-
-    private static KrautreporterApplication instance;
-
-    public static KrautreporterApplication get() {
-        return instance;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
 
-        instance = this;
+        RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+
+        Realm.getInstance(configuration);
     }
 }

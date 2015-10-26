@@ -1,6 +1,6 @@
 package de.metalmatze.krautreporter.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,35 +10,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.malinskiy.superrecyclerview.OnMoreListener;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Date;
+import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
+import de.metalmatze.krautreporter.helpers.Settings;
 import de.metalmatze.krautreporter.models.Article;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import de.metalmatze.krautreporter.services.ArticleService;
+import de.metalmatze.krautreporter.services.AuthorService;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
+    private static final int ARTICLES_BEFORE_MORE = 3;
+    private static final int FIVE_MINUTES = 5 * 60 * 1000;
+
+    private ArticleService articleService;
+    private AuthorService authorService;
+    private Settings settings;
 
     public interface FragmentCallback {
-        public void onItemSelected(int id);
+        void onItemSelected(int id);
 
-        public boolean isTwoPane();
+        boolean isTwoPane();
     }
-
-    public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
 
     /**
      * The fragment's current OnItemSelectedCallback object, which is notified of list item
@@ -57,58 +60,49 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     private LinearLayoutManager layoutManager;
 
     /**
-     * The realm instance used to fetch the articles.
-     */
-    private Realm realm;
-
-    /**
      * The list of all articles.
      */
-    private RealmResults<Article> articles;
+    private List<Article> articles;
 
     /**
      * This indicates if more older articles are currently loading
      */
-    private boolean isLoading = false;
+    private boolean isLoadingMore = false;
 
-    @InjectView(R.id.superRecyclerView)
+    @Bind(R.id.superRecyclerView)
     SuperRecyclerView recyclerView;
 
     public ArticleListFragment() {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof FragmentCallback)) {
+        if (!(context instanceof FragmentCallback)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        fragmentCallback = (FragmentCallback) activity;
+        fragmentCallback = (FragmentCallback) context;
+
+        Api api = Api.with(context);
+        articleService = new ArticleService(context, api);
+        authorService = new AuthorService(context, api);
+        settings = new Settings(context);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        realm = Realm.getInstance(getActivity().getApplicationContext());
-
-        articles = realm.where(Article.class).findAll();
-        articles.sort("order", RealmResults.SORT_ORDER_DESCENDING);
+        articleService.getArticles()
+                .subscribe(articles -> this.articles = articles);
 
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        adapter = new ArticleAdapter(getActivity().getApplicationContext(), articles, this);
-
-        Api.with(getActivity()).updateAuthors(new Api.ApiCallback() {
-            @Override
-            public void finished() {
-                Api.with(getActivity()).updateArticles(null);
-            }
-        });
+        adapter = new ArticleAdapter(getActivity().getApplicationContext(), this.articles, this);
     }
 
     @Override
@@ -117,7 +111,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
         View fragmentView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
-        ButterKnife.inject(this, fragmentView);
+        ButterKnife.bind(this, fragmentView);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -131,39 +125,40 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 R.color.refresh3
         );
 
-        recyclerView.setupMoreListener(new OnMoreListener() {
-            @Override
-            public void onMoreAsked(int numberOfItems, int numberBeforeMore, int currentItemPos) {
-                Article lastArticle = adapter.getLastArticle();
+        // Only update articles on start if it hasn't been done in the past 5 minutes.
+        if (new Date().getTime() - settings.getLastArticlesUpdate() > FIVE_MINUTES) {
 
-                if (lastArticle.getOrder() > 0) {
-                    Api.with(getActivity()).updateArticlesOlderThan(lastArticle.getId(), new Api.ApiCallback() {
-                        @Override
-                        public void finished() {
-                            recyclerView.hideMoreProgress();
+            if (articles.size() > 0) { // Don't show swipeToRefresh spinner if empty spinner already there.
+                recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
+            }
 
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put(getString(R.string.mixpanel_articles_total), articles.size() + 1);
-                                Mixpanel.getInstance(getActivity())
-                                        .track(getString(R.string.mixpanel_articles_older), jsonObject);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
+            authorService.updateAuthors()
+                    .subscribe(authors -> {
+                        articleService.updateArticles()
+                                .subscribe(articles -> {
+                                    this.articles = articles;
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.getSwipeToRefresh().setRefreshing(false);
+                                    settings.setLastArticlesUpdate();
+                                });
                     });
-                } else {
-                    recyclerView.hideMoreProgress();
-                }
-            }
-        }, 3);
+        }
 
-        realm.addChangeListener(new RealmChangeListener() {
-            @Override
-            public void onChange() {
-                adapter.notifyDataSetChanged();
+        recyclerView.setupMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
+            Article lastArticle = adapter.getLastArticle();
+            if (lastArticle.getOrder() > 0 && !isLoadingMore) {
+                isLoadingMore = true;
+                articleService.getArticlesOlderThan(lastArticle.getId())
+                        .subscribe(articles -> {
+                            this.articles = articles;
+                            adapter.notifyDataSetChanged();
+                            recyclerView.hideMoreProgress();
+                            isLoadingMore = false;
+                        });
+            } else {
+                recyclerView.hideMoreProgress();
             }
-        });
+        }, ARTICLES_BEFORE_MORE);
 
         return fragmentView;
     }
@@ -193,11 +188,16 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
-        Api.with(getActivity()).updateArticles(new Api.ApiCallback() {
-            @Override
-            public void finished() {
-                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
-            }
-        });
+        authorService.updateAuthors()
+                .subscribe(authors -> {
+                    articleService.updateArticles()
+                            .subscribe(articles -> {
+                                this.articles = articles;
+                                adapter.notifyDataSetChanged();
+                                recyclerView.getSwipeToRefresh().setRefreshing(false);
+                                settings.setLastArticlesUpdate();
+                                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
+                            });
+                });
     }
 }

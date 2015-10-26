@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,7 +13,7 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
 
-public class ArticleDetailActivity extends ActionBarActivity implements ArticleDetailFragment.ActionBarTitle {
+public class ArticleDetailActivity extends AppCompatActivity implements ArticleDetailFragment.ActionBarTitle {
 
     private ActionBar actionBar;
 
@@ -24,7 +24,9 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
         setContentView(R.layout.activity_article_detail);
 
         actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();

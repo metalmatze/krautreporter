@@ -17,29 +17,45 @@
 #}
 
 # ButterKnife
+-keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
 -keep class **$$ViewInjector { *; }
 -keepnames class * { @butterknife.InjectView *;}
 
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
 # Realm
--keepnames public class * extends io.realm.RealmObject
--keep class io.realm.** { *; }
+-keep class io.realm.annotations.RealmModule
+-keep @io.realm.annotations.RealmModule class *
 -dontwarn javax.**
 -dontwarn io.realm.**
 
 #Retrofit
--keepclassmembernames interface * {
-    @retrofit.http.* <methods>;
-}
-
--keep class retrofit.** { *; }
--keep class de.metalmatze.krautreporter.models.** { *; }
--keepclassmembernames interface * {
-    @retrofit.http.* <methods>;
-}
-
 -dontwarn retrofit.**
 -keep class retrofit.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
 -dontwarn okio.**
+
+#OkHttp
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+
+#SuperRecyclerView
+-dontwarn com.malinskiy.superrecyclerview.SwipeDismissRecyclerViewTouchListener*
+
+#Mixpanel
+-dontwarn com.mixpanel.**
+
+#Retrolambda
+-dontwarn java.lang.invoke.*
+
+#RxJava
+-dontwarn rx.internal.util.unsafe.*

@@ -35,8 +35,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
@@ -47,11 +47,10 @@ import io.realm.RealmResults;
 public class ArticleDetailFragment extends Fragment {
 
     public interface ActionBarTitle {
-        public void setActionBarTitle(String title);
+        void setActionBarTitle(String title);
     }
 
     public static final String ARTICLE_ID = "article_id";
-    public static final String LOG_TAG = ArticleDetailFragment.class.getSimpleName();
 
     private Context context;
 
@@ -62,33 +61,33 @@ public class ArticleDetailFragment extends Fragment {
     private Date readingBegin;
     private long readingDuration = 0;
 
-    @InjectView(R.id.author)
+    @Bind(R.id.author)
     RelativeLayout articleAuthor;
-    @InjectView(R.id.author_image)
+    @Bind(R.id.author_image)
     ImageView articleAuthorImage;
-    @InjectView(R.id.author_name)
+    @Bind(R.id.author_name)
     TextView articleAuthorName;
-    @InjectView(R.id.article_headline)
+    @Bind(R.id.article_headline)
     TextView articleHeadline;
-    @InjectView(R.id.article_date)
+    @Bind(R.id.article_date)
     TextView articleDate;
-    @InjectView(R.id.article_image)
+    @Bind(R.id.article_image)
     ImageView articleImage;
-    @InjectView(R.id.article_image_progressbar)
+    @Bind(R.id.article_image_progressbar)
     ProgressBar articleImageProgressBar;
-    @InjectView(R.id.article_excerpt)
+    @Bind(R.id.article_excerpt)
     TextView articleExcerpt;
-    @InjectView(R.id.article_content)
+    @Bind(R.id.article_content)
     WebView articleContent;
 
     public ArticleDetailFragment() {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        actionBarTitle = (ActionBarTitle) activity;
+        actionBarTitle = (ActionBarTitle) context;
     }
 
     @Override
@@ -120,7 +119,7 @@ public class ArticleDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         setHasOptionsMenu(true);
 
