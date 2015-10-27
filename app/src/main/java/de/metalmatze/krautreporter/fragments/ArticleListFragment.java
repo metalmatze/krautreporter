@@ -3,12 +3,15 @@ package de.metalmatze.krautreporter.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
@@ -29,6 +32,7 @@ import de.metalmatze.krautreporter.services.AuthorService;
 
 public class ArticleListFragment extends Fragment implements ArticleAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
     private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
     private static final int ARTICLES_BEFORE_MORE = 3;
     private static final int FIVE_MINUTES = 5 * 60 * 1000;
@@ -48,6 +52,11 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
      * clicks.
      */
     private FragmentCallback fragmentCallback;
+
+    /**
+     * The fragment view that gets inflated inside onCreateView.
+     */
+    private View fragmentView;
 
     /**
      * The RecyclerView adapter that has all the articles.
@@ -109,7 +118,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View fragmentView = inflater.inflate(R.layout.fragment_article_list, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
         ButterKnife.bind(this, fragmentView);
 
@@ -132,16 +141,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
             }
 
-            authorService.updateAuthors()
-                    .subscribe(authors -> {
-                        articleService.updateArticles()
-                                .subscribe(articles -> {
-                                    this.articles = articles;
-                                    adapter.notifyDataSetChanged();
-                                    recyclerView.getSwipeToRefresh().setRefreshing(false);
-                                    settings.setLastArticlesUpdate();
-                                });
-                    });
+            this.updateAll();
         }
 
         recyclerView.setupMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
@@ -154,6 +154,10 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                             adapter.notifyDataSetChanged();
                             recyclerView.hideMoreProgress();
                             isLoadingMore = false;
+                        }, (throwable) -> {
+                            recyclerView.hideMoreProgress();
+                            isLoadingMore = false;
+                            this.unableToUpdateMessage(throwable);
                         });
             } else {
                 recyclerView.hideMoreProgress();
@@ -188,6 +192,13 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
+        Mixpanel.getInstance(getActivity())
+                .track(getString(R.string.mixpanel_articles_refreshed), null);
+
+        this.updateAll();
+    }
+
+    private void updateAll() {
         authorService.updateAuthors()
                 .subscribe(authors -> {
                     articleService.updateArticles()
@@ -196,8 +207,18 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                                 adapter.notifyDataSetChanged();
                                 recyclerView.getSwipeToRefresh().setRefreshing(false);
                                 settings.setLastArticlesUpdate();
-                                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_articles_refreshed), null);
-                            });
-                });
+                            }, this::unableToUpdateMessage);
+                }, this::unableToUpdateMessage);
+    }
+
+    private void unableToUpdateMessage(Throwable throwable) {
+        Log.d(LOG_TAG, throwable.getMessage());
+        recyclerView.getSwipeToRefresh().setRefreshing(false);
+
+        Snackbar snackbar = Snackbar.make(fragmentView, R.string.error_response, Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        TextView snackbarTextView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        snackbarTextView.setTextColor(getResources().getColor(R.color.white));
+        snackbar.show();
     }
 }
