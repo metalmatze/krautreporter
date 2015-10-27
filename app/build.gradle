@@ -10,8 +10,8 @@ android {
         applicationId "de.metalmatze.krautreporter"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 11
-        versionName "0.2.3"
+        versionCode 12
+        versionName "0.2.4"
         multiDexEnabled true
     }
     buildTypes {
@@ -54,6 +54,7 @@ dependencies {
         transitive = true;
     }
     compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:design:23.1.0'
     compile 'com.android.support:support-v4:23.1.0'
     compile 'com.google.android.gms:play-services-base:8.1.0' // for mixpanel
     compile 'com.google.android.gms:play-services-gcm:8.1.0' // for mixpanel

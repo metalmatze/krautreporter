@@ -4,7 +4,7 @@
     <string name="action_open_in_browser">Im Browser öffnen</string>
     <string name="share">Teilen</string>
     <string name="share_article">Artikel teilen</string>
-    <string name="error_response_rss">Artikel können nicht aktualisiert werden.</string>
+    <string name="error_response">Aktualisierung fehlgeschlagen.</string>
     <string name="error_open_image">Bild kann nicht geöffnet werden.</string>
     <string name="action_become_member">Mitglied werden</string>
 
