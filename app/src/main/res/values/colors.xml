@@ -15,4 +15,6 @@
     <color name="refresh2">@color/accent</color>
     <color name="refresh3">@color/primary</color>
 
+    <color name="white">@android:color/white</color>
+
 </resources>
