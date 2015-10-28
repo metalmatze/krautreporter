@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
@@ -51,6 +53,10 @@ public class ArticleListActivity extends AppCompatActivity implements ArticleLis
         int id = item.getItemId();
 
         if (id == R.id.action_become_member) {
+            Answers.getInstance().logCustom(
+                    new CustomEvent(getString(R.string.answers_become_member))
+            );
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://krautreporter.de/pages/mitglied_werden"));
 

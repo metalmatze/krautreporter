@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.Date;
@@ -146,6 +148,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         recyclerView.setupMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
             Article lastArticle = adapter.getLastArticle();
             if (lastArticle.getOrder() > 0 && !isLoadingMore) {
+                Answers.getInstance().logCustom(new CustomEvent(getString(R.string.answers_articles_older)));
+
                 isLoadingMore = true;
                 articleService.getArticlesOlderThan(lastArticle.getId())
                         .subscribe(articles -> {
@@ -191,6 +195,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
+        Answers.getInstance().logCustom(new CustomEvent(getString(R.string.answers_articles_refreshed)));
+
         this.updateAll();
     }
 

@@ -19,6 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
+import com.crashlytics.android.answers.ShareEvent;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -90,10 +94,10 @@ public class ArticleDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getActivity().getApplicationContext();
+        this.context = getActivity().getApplicationContext();
 
         Realm realm = Realm.getInstance(context);
-        picasso = Picasso.with(context);
+        this.picasso = Picasso.with(context);
 
         if (getArguments().containsKey(ARTICLE_ID) && getArguments().getInt(ARTICLE_ID) >= 0) {
             article = realm
@@ -149,6 +153,10 @@ public class ArticleDetailFragment extends Fragment {
             }
 
             articleAuthor.setOnClickListener(view -> {
+                CustomEvent artileAuthorClickEvent = new CustomEvent(getString(R.string.answers_author_clicked))
+                        .putCustomAttribute(getString(R.string.answers_content_id), article.getAuthor().getId());
+                Answers.getInstance().logCustom(artileAuthorClickEvent);
+
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(article.getAuthor().getUrl()));
                 startActivity(intent);
@@ -175,6 +183,17 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentId(String.valueOf(article.getId()))
+                .putContentName(article.getTitle())
+                .putContentType("article")
+                .putCustomAttribute(getString(R.string.answers_reading_duration), this.readingDuration));
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_article, menu);
     }
@@ -185,13 +204,26 @@ public class ArticleDetailFragment extends Fragment {
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_browser) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(article.getUrl()));
+            CustomEvent articleInBrowserEvent = new CustomEvent(getString(R.string.answers_open_in_browser))
+                    .putCustomAttribute(getString(R.string.answers_content_id), this.article.getId())
+                    .putCustomAttribute(getString(R.string.answers_content_name), this.article.getTitle())
+                    .putCustomAttribute(getString(R.string.answers_content_type), getString(R.string.answers_type_article))
+                    .putCustomAttribute(getString(R.string.answers_content_url), this.article.getUrl());
+            Answers.getInstance().logCustom(articleInBrowserEvent);
 
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(this.article.getUrl()));
             startActivity(intent);
         }
 
         if (itemId == R.id.action_share) {
+            ShareEvent shareEvent = new ShareEvent()
+                    .putContentId(String.valueOf(article.getId()))
+                    .putContentName(article.getTitle())
+                    .putContentType(getString(R.string.answers_type_article))
+                    .putCustomAttribute(getString(R.string.answers_content_url), article.getUrl());
+            Answers.getInstance().logShare(shareEvent);
+
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());
