@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
-import de.metalmatze.krautreporter.helpers.Mixpanel;
 
 public class ArticleDetailActivity extends AppCompatActivity implements ArticleDetailFragment.ActionBarTitle {
 
@@ -43,12 +45,6 @@ public class ArticleDetailActivity extends AppCompatActivity implements ArticleD
     }
 
     @Override
-    protected void onDestroy() {
-        Mixpanel.getInstance(this).flush();
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_article_list, menu);
 
@@ -64,7 +60,9 @@ public class ArticleDetailActivity extends AppCompatActivity implements ArticleD
         }
 
         if (id == R.id.action_become_member) {
-            Mixpanel.getInstance(this).track(getString(R.string.mixpanel_become_member), null);
+            Answers.getInstance().logCustom(
+                    new CustomEvent(getString(R.string.answers_become_member))
+            );
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://krautreporter.de/pages/mitglied_werden"));

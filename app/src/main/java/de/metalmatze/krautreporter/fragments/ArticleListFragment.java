@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.Date;
@@ -24,7 +26,6 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
-import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.helpers.Settings;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
@@ -147,6 +148,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         recyclerView.setupMoreListener((numberOfItems, numberBeforeMore, currentItemPos) -> {
             Article lastArticle = adapter.getLastArticle();
             if (lastArticle.getOrder() > 0 && !isLoadingMore) {
+                Answers.getInstance().logCustom(new CustomEvent(getString(R.string.answers_articles_older)));
+
                 isLoadingMore = true;
                 articleService.getArticlesOlderThan(lastArticle.getId())
                         .subscribe(articles -> {
@@ -192,8 +195,7 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
-        Mixpanel.getInstance(getActivity())
-                .track(getString(R.string.mixpanel_articles_refreshed), null);
+        Answers.getInstance().logCustom(new CustomEvent(getString(R.string.answers_articles_refreshed)));
 
         this.updateAll();
     }
