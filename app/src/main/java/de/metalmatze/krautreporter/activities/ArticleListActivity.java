@@ -4,19 +4,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
 
+import de.metalmatze.krautreporter.BuildConfig;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
 import de.metalmatze.krautreporter.helpers.Mixpanel;
 import io.fabric.sdk.android.Fabric;
 
-public class ArticleListActivity extends AppCompatActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
+public class ArticleListActivity extends BaseActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
 
     protected ActionBar actionBar;
 
