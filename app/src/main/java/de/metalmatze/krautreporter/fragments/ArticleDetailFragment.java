@@ -1,6 +1,5 @@
 package de.metalmatze.krautreporter.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -23,8 +22,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,7 +35,6 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Image;
 import io.realm.Realm;
@@ -152,22 +148,10 @@ public class ArticleDetailFragment extends Fragment {
                 setArticleAuthorImage(authorImage.getSrc());
             }
 
-            articleAuthor.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put(getString(R.string.mixpanel_author_id), article.getAuthor().getId());
-                        Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_author_clicked), jsonObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(article.getAuthor().getUrl()));
-                    startActivity(intent);
-                }
+            articleAuthor.setOnClickListener(view -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(article.getAuthor().getUrl()));
+                startActivity(intent);
             });
         }
 
@@ -191,20 +175,6 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
-            jsonObject.put(getString(R.string.mixpanel_duration), readingDuration);
-            Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_read), jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        super.onDestroy();
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_article, menu);
     }
@@ -215,15 +185,6 @@ public class ArticleDetailFragment extends Fragment {
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_browser) {
-
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
-                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_in_browser), jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(article.getUrl()));
 
@@ -231,15 +192,6 @@ public class ArticleDetailFragment extends Fragment {
         }
 
         if (itemId == R.id.action_share) {
-
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
-                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_shared), jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Krautreporter: " + this.article.getTitle());

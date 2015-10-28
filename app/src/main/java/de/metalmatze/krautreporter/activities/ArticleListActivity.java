@@ -13,7 +13,6 @@ import com.crashlytics.android.Crashlytics;
 import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
-import de.metalmatze.krautreporter.helpers.Mixpanel;
 import io.fabric.sdk.android.Fabric;
 
 public class ArticleListActivity extends AppCompatActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
@@ -41,12 +40,6 @@ public class ArticleListActivity extends AppCompatActivity implements ArticleLis
     }
 
     @Override
-    protected void onDestroy() {
-        Mixpanel.getInstance(this).flush();
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_article_list, menu);
 
@@ -58,8 +51,6 @@ public class ArticleListActivity extends AppCompatActivity implements ArticleLis
         int id = item.getItemId();
 
         if (id == R.id.action_become_member) {
-            Mixpanel.getInstance(this).track(getString(R.string.mixpanel_become_member), null);
-
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://krautreporter.de/pages/mitglied_werden"));
 

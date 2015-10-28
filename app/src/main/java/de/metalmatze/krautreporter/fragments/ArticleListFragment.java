@@ -24,7 +24,6 @@ import de.metalmatze.krautreporter.R;
 import de.metalmatze.krautreporter.adapters.ArticleAdapter;
 import de.metalmatze.krautreporter.api.Api;
 import de.metalmatze.krautreporter.helpers.DividerItemDecoration;
-import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.helpers.Settings;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.services.ArticleService;
@@ -192,9 +191,6 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
 
     @Override
     public void onRefresh() {
-        Mixpanel.getInstance(getActivity())
-                .track(getString(R.string.mixpanel_articles_refreshed), null);
-
         this.updateAll();
     }
 
