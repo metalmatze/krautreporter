@@ -131,8 +131,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
         recyclerView.setRefreshingColorResources(
                 R.color.refresh1,
                 R.color.refresh2,
-                R.color.refresh3,
-                R.color.refresh3
+                R.color.refresh1,
+                R.color.refresh2
         );
 
         // Only update articles on start if it hasn't been done in the past 5 minutes.

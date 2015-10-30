@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#fffd0243</color>
-    <color name="primary_dark">#ffe6023d</color>
-    <color name="accent">@color/primary</color>
+    <color name="accent">#fffd0243</color>
+    <color name="accent_dark">#ffe6023d</color>
+
     <color name="primary_text">#ff333333</color>
     <color name="background">#fff2f2f2</color>
 
@@ -12,8 +12,7 @@
     <color name="body">@color/headline</color>
 
     <color name="refresh1">@color/accent</color>
-    <color name="refresh2">@color/accent</color>
-    <color name="refresh3">@color/primary</color>
+    <color name="refresh2">@color/headline</color>
 
     <color name="white">@android:color/white</color>
 
