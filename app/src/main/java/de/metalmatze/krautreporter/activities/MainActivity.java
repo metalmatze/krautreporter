@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements ArticleListFragme
 
         Fabric.with(this, new Crashlytics());
 
-        setContentView(R.layout.activity_article_list);
+        setContentView(R.layout.activity_main);
 
         if (findViewById(R.id.article_detail_container) != null) {
             twoPane = true;
