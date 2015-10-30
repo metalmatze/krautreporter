@@ -6,7 +6,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="de.metalmatze.krautreporter.activities.ArticleListActivity">
+    tools:context="de.metalmatze.krautreporter.activities.MainActivity">
 
     <!--
     This layout is a two-pane layout for the Articles

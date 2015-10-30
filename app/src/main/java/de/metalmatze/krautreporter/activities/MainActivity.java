@@ -17,7 +17,7 @@ import de.metalmatze.krautreporter.fragments.ArticleDetailFragment;
 import de.metalmatze.krautreporter.fragments.ArticleListFragment;
 import io.fabric.sdk.android.Fabric;
 
-public class ArticleListActivity extends AppCompatActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
+public class MainActivity extends AppCompatActivity implements ArticleListFragment.FragmentCallback, ArticleDetailFragment.ActionBarTitle {
 
     protected ActionBar actionBar;
 

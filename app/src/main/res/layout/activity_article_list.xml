@@ -4,5 +4,5 @@
     android:name="de.metalmatze.krautreporter.fragments.ArticleListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.metalmatze.krautreporter.activities.ArticleListActivity"
+    tools:context="de.metalmatze.krautreporter.activities.MainActivity"
     tools:layout="@android:layout/list_content" />
