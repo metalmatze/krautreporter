@@ -26,7 +26,7 @@ public class TabsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_tabs, container, false);
 
-        TabsAdapter tabsAdapter = new TabsAdapter(getFragmentManager());
+        TabsAdapter tabsAdapter = new TabsAdapter(getFragmentManager(), getContext());
         ViewPager tabsPager = (ViewPager) fragmentView.findViewById(R.id.tabs_pager);
         tabsPager.setAdapter(tabsAdapter);
 

@@ -1,11 +1,13 @@
 <resources>
 
-    <string name="action_settings">Einstellungen</string>
+    <string name="action_become_member">Mitglied werden</string>
     <string name="action_open_in_browser">Im Browser öffnen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="articles">Artikel</string>
+    <string name="authors">Autoren</string>
+    <string name="error_open_image">Bild kann nicht geöffnet werden.</string>
+    <string name="error_response">Aktualisierung fehlgeschlagen.</string>
     <string name="share">Teilen</string>
     <string name="share_article">Artikel teilen</string>
-    <string name="error_response">Aktualisierung fehlgeschlagen.</string>
-    <string name="error_open_image">Bild kann nicht geöffnet werden.</string>
-    <string name="action_become_member">Mitglied werden</string>
 
 </resources>
