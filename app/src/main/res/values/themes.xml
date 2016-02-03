@@ -13,6 +13,7 @@
 
     <style name="AppTheme" parent="AppTheme.Base" />
 
-    <style name="AppTheme.TabLayout" parent="Widget.Design.TabLayout" />
-
+    <style name="AppTheme.TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabSelectedTextColor">@color/accent</item>
+    </style>
 </resources>
