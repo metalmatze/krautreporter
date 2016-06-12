@@ -1,7 +1,6 @@
 .DS_Store
 .gradle
-/.idea/libraries
-/.idea/workspace.xml
+/.idea
 /Android.iml
 /app/app-release.apk
 /app/app.iml
@@ -12,5 +11,5 @@
 /app/src/main/res/values/com_crashlytics_export_strings.xml
 /app/src/main/res/values/mixpanel_strings.xml
 /build
-/local.properties
 /captures
+/local.properties
