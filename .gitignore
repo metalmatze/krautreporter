@@ -4,7 +4,7 @@
 /Android.iml
 /app/app-release.apk
 /app/app.iml
-/app/crashlytics.properties
+/app/fabric.properties
 /app/manifest-merger-release-report.txt
 /app/src/main/assets/crashlytics-build.properties
 /app/src/main/res/values/apis.xml
