@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/adapter_article_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/activity_margin_horizontal">
 
@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/article_author"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="AUTHOR"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
