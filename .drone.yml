@@ -1,0 +1,5 @@
+build:
+  image: jacekmarchwicki/android:latest
+  commands:
+    - ./gradlew assembleDebug
+
