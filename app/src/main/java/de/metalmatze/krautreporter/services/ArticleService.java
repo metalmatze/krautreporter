@@ -32,6 +32,23 @@ public class ArticleService {
         return Observable.just(articles);
     }
 
+    public Observable<List<Article>> renewArticles() {
+        return api.request().articles()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(articles -> articles.data)
+                .map(this::deleteAllArticles)
+                .map(this::copyOrUpdateArticles);
+    }
+
+    private List<Article> deleteAllArticles(List<Article> articles) {
+        realm.beginTransaction();
+        realm.clear(Article.class);
+        realm.commitTransaction();
+
+        return articles;
+    }
+
     public Observable<List<Article>> updateArticles() {
         return api.request().articles()
                 .subscribeOn(Schedulers.io())
