@@ -185,12 +185,14 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentId(String.valueOf(article.getId()))
-                .putContentName(article.getTitle())
-                .putContentType("article")
-                .putCustomAttribute(getString(R.string.answers_reading_duration), this.readingDuration));
+        try {
+            Answers.getInstance().logContentView(new ContentViewEvent()
+                    .putContentId(String.valueOf(article.getId()))
+                    .putContentName(article.getTitle())
+                    .putContentType("article")
+                    .putCustomAttribute(getString(R.string.answers_reading_duration), this.readingDuration));
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     @Override
