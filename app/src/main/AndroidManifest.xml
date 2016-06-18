@@ -37,12 +37,6 @@
                 android:value="de.metalmatze.krautreporter.activities.ArticleListActivity" />
         </activity>
 
-        <activity android:name="com.mixpanel.android.surveys.SurveyActivity" />
-
-        <meta-data
-            android:name="com.mixpanel.android.MPConfig.ResourcePackageName"
-            android:value="de.metalmatze.krautreporter" />
-
     </application>
 
 </manifest>

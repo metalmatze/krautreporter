@@ -51,9 +51,6 @@
 #SuperRecyclerView
 -dontwarn com.malinskiy.superrecyclerview.SwipeDismissRecyclerViewTouchListener*
 
-#Mixpanel
--dontwarn com.mixpanel.**
-
 #Retrolambda
 -dontwarn java.lang.invoke.*
 

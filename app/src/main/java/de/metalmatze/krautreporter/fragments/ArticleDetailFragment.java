@@ -1,6 +1,5 @@
 package de.metalmatze.krautreporter.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -20,11 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
+import com.crashlytics.android.answers.ShareEvent;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,7 +39,6 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.metalmatze.krautreporter.R;
-import de.metalmatze.krautreporter.helpers.Mixpanel;
 import de.metalmatze.krautreporter.models.Article;
 import de.metalmatze.krautreporter.models.Image;
 import io.realm.Realm;
@@ -94,10 +94,10 @@ public class ArticleDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getActivity().getApplicationContext();
+        this.context = getActivity().getApplicationContext();
 
         Realm realm = Realm.getInstance(context);
-        picasso = Picasso.with(context);
+        this.picasso = Picasso.with(context);
 
         if (getArguments().containsKey(ARTICLE_ID) && getArguments().getInt(ARTICLE_ID) >= 0) {
             article = realm
@@ -152,22 +152,14 @@ public class ArticleDetailFragment extends Fragment {
                 setArticleAuthorImage(authorImage.getSrc());
             }
 
-            articleAuthor.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            articleAuthor.setOnClickListener(view -> {
+                CustomEvent artileAuthorClickEvent = new CustomEvent(getString(R.string.answers_author_clicked))
+                        .putCustomAttribute(getString(R.string.answers_content_id), article.getAuthor().getId());
+                Answers.getInstance().logCustom(artileAuthorClickEvent);
 
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put(getString(R.string.mixpanel_author_id), article.getAuthor().getId());
-                        Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_author_clicked), jsonObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(article.getAuthor().getUrl()));
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(article.getAuthor().getUrl()));
+                startActivity(intent);
             });
         }
 
@@ -192,16 +184,15 @@ public class ArticleDetailFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
-            jsonObject.put(getString(R.string.mixpanel_duration), readingDuration);
-            Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_read), jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         super.onDestroy();
+        try {
+            Answers.getInstance().logContentView(new ContentViewEvent()
+                    .putContentId(String.valueOf(article.getId()))
+                    .putContentName(article.getTitle())
+                    .putContentType("article")
+                    .putCustomAttribute(getString(R.string.answers_reading_duration), this.readingDuration));
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     @Override
@@ -215,30 +206,25 @@ public class ArticleDetailFragment extends Fragment {
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_browser) {
-
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
-                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_in_browser), jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            CustomEvent articleInBrowserEvent = new CustomEvent(getString(R.string.answers_open_in_browser))
+                    .putCustomAttribute(getString(R.string.answers_content_id), this.article.getId())
+                    .putCustomAttribute(getString(R.string.answers_content_name), this.article.getTitle())
+                    .putCustomAttribute(getString(R.string.answers_content_type), getString(R.string.answers_type_article))
+                    .putCustomAttribute(getString(R.string.answers_content_url), this.article.getUrl());
+            Answers.getInstance().logCustom(articleInBrowserEvent);
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(article.getUrl()));
-
+            intent.setData(Uri.parse(this.article.getUrl()));
             startActivity(intent);
         }
 
         if (itemId == R.id.action_share) {
-
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(getString(R.string.mixpanel_article_id), article.getId());
-                Mixpanel.getInstance(getActivity()).track(getString(R.string.mixpanel_article_shared), jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ShareEvent shareEvent = new ShareEvent()
+                    .putContentId(String.valueOf(article.getId()))
+                    .putContentName(article.getTitle())
+                    .putContentType(getString(R.string.answers_type_article))
+                    .putCustomAttribute(getString(R.string.answers_content_url), article.getUrl());
+            Answers.getInstance().logShare(shareEvent);
 
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
