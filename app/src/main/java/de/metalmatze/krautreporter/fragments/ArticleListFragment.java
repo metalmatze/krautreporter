@@ -36,7 +36,8 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     public static final String LOG_TAG = ArticleListFragment.class.getSimpleName();
     private static final String ADAPTER_SELECTED_ITEM = "ADAPTER_SELECTED_ITEM";
     private static final int ARTICLES_BEFORE_MORE = 3;
-    private static final int FIVE_MINUTES = 5 * 60 * 1000;
+    private static final int MINUTE = 60 * 1000;
+    private static final int HOUR = 60 * MINUTE;
 
     private ArticleService articleService;
     private AuthorService authorService;
@@ -135,11 +136,23 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
                 R.color.refresh3
         );
 
-        // Only update articles on start if it hasn't been done in the past 5 minutes.
-        if (new Date().getTime() - settings.getLastArticlesUpdate() > FIVE_MINUTES) {
 
+        // Renew all articles on start if there hasn't been an update in the past day
+        if (new Date().getTime() - settings.getLastArticlesUpdate() > 24 * HOUR) {
             if (articles.size() > 0) { // Don't show swipeToRefresh spinner if empty spinner already there.
-                recyclerView.getSwipeToRefresh().post(() -> recyclerView.getSwipeToRefresh().setRefreshing(true));
+                recyclerView.getSwipeToRefresh().post(() ->
+                        recyclerView.getSwipeToRefresh().setRefreshing(true)
+                );
+            }
+
+            this.renewAll();
+
+        } else if (new Date().getTime() - settings.getLastArticlesUpdate() > 5 * MINUTE) {
+            // Only update articles on start if it hasn't been done in the past 5 minutes.
+            if (articles.size() > 0) { // Don't show swipeToRefresh spinner if empty spinner already there.
+                recyclerView.getSwipeToRefresh().post(() ->
+                        recyclerView.getSwipeToRefresh().setRefreshing(true)
+                );
             }
 
             this.updateAll();
@@ -197,13 +210,26 @@ public class ArticleListFragment extends Fragment implements ArticleAdapter.OnIt
     public void onRefresh() {
         Answers.getInstance().logCustom(new CustomEvent(getString(R.string.answers_articles_refreshed)));
 
-        this.updateAll();
+        this.renewAll();
     }
 
     private void updateAll() {
         authorService.updateAuthors()
                 .subscribe(authors -> {
                     articleService.updateArticles()
+                            .subscribe(articles -> {
+                                this.articles = articles;
+                                adapter.notifyDataSetChanged();
+                                recyclerView.getSwipeToRefresh().setRefreshing(false);
+                                settings.setLastArticlesUpdate();
+                            }, this::unableToUpdateMessage);
+                }, this::unableToUpdateMessage);
+    }
+
+    private void renewAll() {
+        authorService.updateAuthors()
+                .subscribe(authors -> {
+                    articleService.renewArticles()
                             .subscribe(articles -> {
                                 this.articles = articles;
                                 adapter.notifyDataSetChanged();
