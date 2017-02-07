@@ -1,3 +1,5 @@
+# Warning: This project as been deprecated
+
 # Krautreporter (Unofficial)
 
 Krautreporter is an Android App for [krautreporter.de](https://krautreporter.de) with Material Design.
